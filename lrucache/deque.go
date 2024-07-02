@@ -57,6 +57,10 @@ func (d *Deque) Size() int {
 	return d.cap - (d.tail - d.head)
 }
 
+func (d *Deque) Cap() int {
+	return d.cap
+}
+
 func (d *Deque) PushBack(v int) {
 	if d.Size() == d.cap-1 {
 		d.grow()

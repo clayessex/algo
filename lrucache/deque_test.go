@@ -20,13 +20,13 @@ func makeTestDeque(values []int, head int, tail int) *Deque {
 	return &Deque{values, len(values), head, tail}
 }
 
-func expect(t *testing.T, got interface{}, want interface{}) {
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("%s failed: got: %v != want: %v\n", t.Name(), got, want)
+func expect(t *testing.T, actual interface{}, expected interface{}) {
+	if !reflect.DeepEqual(expected, actual) {
+		t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", t.Name(), expected, actual)
 	}
 }
 
-func TestMakeDequeSized(t *testing.T) {
+func Test_internal_MakeDequeSized(t *testing.T) {
 	d := MakeDequeSized(4)
 	if d.cap != 4 {
 		t.Fatalf("MakeDequeSized failed: expected cap: %v, got %v", 4, d.cap)
@@ -36,7 +36,7 @@ func TestMakeDequeSized(t *testing.T) {
 	}
 }
 
-func TestDequeSize(t *testing.T) {
+func Test_internal_DequeSize(t *testing.T) {
 	d := &Deque{[]int{0, 0}, 2, 0, 0}
 	expect(t, d.Size(), 0)
 	d = &Deque{[]int{9, 0}, 2, 1, 0}
@@ -49,7 +49,7 @@ func TestDequeSize(t *testing.T) {
 	expect(t, d.Size(), 3)
 }
 
-func TestPushBack(t *testing.T) {
+func Test_internal_PushBack(t *testing.T) {
 	d := &Deque{[]int{0, 0}, 2, 0, 0}
 	d.PushBack(9)
 	expect(t, d, &Deque{[]int{9, 0}, 2, 1, 0})
@@ -69,36 +69,60 @@ func TestPushBack(t *testing.T) {
 	expect(t, d, &Deque{[]int{7, 6, 0, 8}, 4, 2, 3})
 }
 
-// func TestPushBackEmpty(t *testing.T) {
-// 	d := MakeDequeSized(5)
-// 	d.PushBack(9)
-//
-// 	target := &Deque{
-// 		[]int{9, 0, 0, 0, 0},
-// 		5,
-// 		1,
-// 		0,
-// 	}
-//
-// 	if !reflect.DeepEqual(d, target) {
-// 		t.Fatalf("Deque PushBackEmpty failed: %v, %v\n", d, target)
-// 	}
-// }
-//
-// func TestPushBackFull(t *testing.T) {
-// 	d := MakeDequeSized(2)
-// 	d.PushBack(9)
-// 	d.PushBack(9)
-// 	d.PushBack(9)
-//
-// 	target := &Deque{
-// 		[]int{9, 9, 9, 0},
-// 		4,
-// 		3,
-// 		0,
-// 	}
-//
-// 	if !reflect.DeepEqual(d, target) {
-// 		t.Fatalf("Deque PushBackFull failed: %v, %v\n", d, target)
-// 	}
-// }
+func TestMakeDequeSized(t *testing.T) {
+	d := MakeDequeSized(4)
+	expect(t, d.Cap(), 4)
+	expect(t, d.Size(), 0)
+	d = MakeDequeSized(32)
+	expect(t, d.Cap(), 32)
+	expect(t, d.Size(), 0)
+	d = MakeDequeSized(1000)
+	expect(t, d.Cap(), 1000)
+	expect(t, d.Size(), 0)
+}
+
+func TestMakeDeque(t *testing.T) {
+	d := MakeDeque()
+	if d.Cap() <= 0 { // Internal default larger than zero
+		t.Fatalf("expected: >0, got: %v\n", d.Cap())
+	}
+}
+
+func TestPushBack(t *testing.T) {
+	d := MakeDequeSized(4)
+	d.PushBack(9)
+	expect(t, d.Cap(), 4)
+	expect(t, d.Size(), 1)
+	d.PushBack(8)
+	d.PushBack(7)
+	expect(t, d.Cap(), 4)
+	expect(t, d.Size(), 3)
+	expect(t, d.PopBack(), 7)
+	expect(t, d.PopBack(), 8)
+	expect(t, d.PopBack(), 9)
+	expect(t, d.Cap(), 4)
+	expect(t, d.Size(), 0)
+	d.PushBack(6)
+	d.PushBack(5)
+	d.PushBack(4)
+	d.PushBack(3)
+	d.PushBack(2)
+	expect(t, d.Cap(), 8) // Internal
+	expect(t, d.Size(), 5)
+}
+
+func TestPushFront(t *testing.T) {
+	d := MakeDequeSized(4)
+	d.PushFront(9)
+	expect(t, d.Cap(), 4)
+	expect(t, d.Size(), 1)
+	// expect(t, d.PopFront(), 9)
+
+	// d.PushFront(8)
+	// d.PushFront(7)
+	// d.PushFront(6)
+	// expect(t, d.Size(), 3)
+	// expect(t, d.PopFront(), 8)
+	// expect(t, d.PopFront(), 7)
+	// expect(t, d.PopFront(), 6)
+}

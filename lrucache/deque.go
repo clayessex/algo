@@ -29,6 +29,7 @@ func MakeDequeSized(size int) *Deque {
 	}
 }
 
+/** double the size of the buffer and copy the old one over */
 func (d *Deque) grow() {
 	newSize := d.cap * 2
 	newBuf := make([]int, newSize)
@@ -41,6 +42,19 @@ func (d *Deque) grow() {
 	d.cap = newSize
 	d.tail = 0
 	d.head = newHead
+}
+
+/** calculate the next index in sequence, does not detect a full buffer */
+func (d *Deque) next(index int) int {
+	return (index + 1) % d.cap
+}
+
+/** calculate the previous index in sequence, does not detect an empty buffer */
+func (d *Deque) prev(index int) int {
+	if index == 0 {
+		return d.cap - 1
+	}
+	return index - 1
 }
 
 func (d *Deque) Size() int {
@@ -66,14 +80,14 @@ func (d *Deque) PushBack(v int) {
 		d.grow()
 	}
 	d.buf[d.head] = v
-	d.head = (d.head + 1) % d.cap
+	d.head = d.next(d.head)
 }
 
 func (d *Deque) PushFront(v int) {
 	if d.Size() == d.cap-1 {
 		d.grow()
 	}
-	d.tail = (d.tail - 1) % d.cap
+	d.tail = d.prev(d.tail)
 	d.buf[d.tail] = v
 }
 
@@ -81,7 +95,7 @@ func (d *Deque) PopBack() int {
 	if d.Size() == 0 {
 		panic("can't PopBack() from an empty deque")
 	}
-	d.head = (d.head - 1) % d.cap
+	d.head = d.prev(d.head)
 	return d.buf[d.head]
 }
 
@@ -90,7 +104,7 @@ func (d *Deque) PopFront() int {
 		panic("can't PopFront() from an empty deque")
 	}
 	result := d.buf[d.tail]
-	d.tail = (d.tail + 1) % d.cap
+	d.tail = d.next(d.tail)
 	return result
 }
 

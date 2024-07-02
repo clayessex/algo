@@ -91,38 +91,87 @@ func TestMakeDeque(t *testing.T) {
 func TestPushBack(t *testing.T) {
 	d := MakeDequeSized(4)
 	d.PushBack(9)
-	expect(t, d.Cap(), 4)
 	expect(t, d.Size(), 1)
 	d.PushBack(8)
 	d.PushBack(7)
-	expect(t, d.Cap(), 4)
 	expect(t, d.Size(), 3)
 	expect(t, d.PopBack(), 7)
 	expect(t, d.PopBack(), 8)
 	expect(t, d.PopBack(), 9)
-	expect(t, d.Cap(), 4)
 	expect(t, d.Size(), 0)
 	d.PushBack(6)
 	d.PushBack(5)
 	d.PushBack(4)
 	d.PushBack(3)
 	d.PushBack(2)
-	expect(t, d.Cap(), 8) // Internal
 	expect(t, d.Size(), 5)
 }
 
 func TestPushFront(t *testing.T) {
 	d := MakeDequeSized(4)
 	d.PushFront(9)
-	expect(t, d.Cap(), 4)
 	expect(t, d.Size(), 1)
-	// expect(t, d.PopFront(), 9)
+	expect(t, d.PopFront(), 9)
 
-	// d.PushFront(8)
-	// d.PushFront(7)
-	// d.PushFront(6)
-	// expect(t, d.Size(), 3)
-	// expect(t, d.PopFront(), 8)
-	// expect(t, d.PopFront(), 7)
-	// expect(t, d.PopFront(), 6)
+	d.PushFront(8)
+	d.PushFront(7)
+	d.PushFront(6)
+	expect(t, d.Size(), 3)
+	expect(t, d.PopFront(), 6)
+	expect(t, d.PopBack(), 8)
+	expect(t, d.PopFront(), 7)
+}
+
+func TestPopBack(t *testing.T) {
+	d := MakeDequeSized(4)
+	d.PushBack(9)
+	expect(t, d.Size(), 1)
+	expect(t, d.PopBack(), 9)
+	expect(t, d.Size(), 0)
+	d.PushBack(7)
+	d.PushBack(6)
+	d.PushFront(8)
+	expect(t, d.Size(), 3)
+	expect(t, d.PopBack(), 6)
+	expect(t, d.PopBack(), 7)
+	expect(t, d.PopBack(), 8)
+	expect(t, d.Size(), 0)
+}
+
+func TestPopFront(t *testing.T) {
+	d := MakeDequeSized(4)
+	d.PushBack(9)
+	expect(t, d.Size(), 1)
+	expect(t, d.PopFront(), 9)
+	expect(t, d.Size(), 0)
+	d.PushBack(7)
+	d.PushBack(6)
+	d.PushFront(8)
+	expect(t, d.Size(), 3)
+	expect(t, d.PopFront(), 8)
+	expect(t, d.PopFront(), 7)
+	expect(t, d.PopFront(), 6)
+	expect(t, d.Size(), 0)
+}
+
+func TestAutoResize(t *testing.T) {
+	d := MakeDequeSized(2)
+	d.PushBack(9)
+	d.PushBack(8)
+	expect(t, d.Size(), 2)
+	expect(t, d.Cap(), 4) // Internal
+	d.PushBack(7)
+	d.PushBack(6)
+	d.PushBack(5)
+	expect(t, d.Size(), 5)
+	expect(t, d.Cap(), 8) // Internal
+
+	expect(t, d.PopBack(), 5)
+	expect(t, d.PopBack(), 6)
+	expect(t, d.PopBack(), 7)
+	expect(t, d.PopBack(), 8)
+	expect(t, d.PopBack(), 9)
+
+	expect(t, d.Size(), 0)
+	expect(t, d.Cap(), 8) // Internal
 }

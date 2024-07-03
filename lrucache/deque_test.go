@@ -88,6 +88,48 @@ func TestMakeDeque(t *testing.T) {
 	}
 }
 
+func TestSize(t *testing.T) {
+	d := MakeDequeSized(4)
+	expect(t, d.Size(), 0)
+	d.PushBack(9)
+	expect(t, d.Size(), 1)
+	d.PopBack()
+	expect(t, d.Size(), 0)
+	d.PushBack(0)
+	d.PushBack(1)
+	d.PopFront()
+	d.PopFront()
+
+	d.PushBack(2)
+	expect(t, d.Size(), 1)
+	d.PushBack(3)
+	expect(t, d.Size(), 2)
+	d.PushBack(4)
+	expect(t, d.Size(), 3)
+	d.PopFront()
+	expect(t, d.Size(), 2)
+	d.PopFront()
+	expect(t, d.Size(), 1)
+	d.PopFront()
+	expect(t, d.Size(), 0)
+	d.PushBack(3)
+	d.PushBack(4)
+	d.PushBack(5)
+	expect(t, d.Size(), 3)
+	d.PopFront()
+	d.PopFront()
+	d.PopFront()
+	expect(t, d.Size(), 0)
+}
+
+func TestCap(t *testing.T) {
+	d := MakeDequeSized(2)
+	expect(t, d.Cap(), 2)
+	d.PushBack(9)
+	d.PushBack(8)
+	expect(t, d.Cap(), 4)
+}
+
 func TestPushBack(t *testing.T) {
 	d := MakeDequeSized(4)
 	d.PushBack(9)
@@ -102,7 +144,7 @@ func TestPushBack(t *testing.T) {
 	d.PushBack(6)
 	d.PushBack(5)
 	d.PushBack(4)
-	d.PushBack(3)
+	d.PushBack(3) // resize
 	d.PushBack(2)
 	expect(t, d.Size(), 5)
 }
@@ -120,6 +162,13 @@ func TestPushFront(t *testing.T) {
 	expect(t, d.PopFront(), 6)
 	expect(t, d.PopBack(), 8)
 	expect(t, d.PopFront(), 7)
+
+	d.PushFront(5)
+	d.PushFront(4)
+	d.PushFront(3)
+	d.PushFront(2) // resize
+	d.PushFront(1)
+	expect(t, d.Size(), 5)
 }
 
 func TestPopBack(t *testing.T) {
@@ -136,6 +185,12 @@ func TestPopBack(t *testing.T) {
 	expect(t, d.PopBack(), 7)
 	expect(t, d.PopBack(), 8)
 	expect(t, d.Size(), 0)
+
+	// Test panic
+	defer func() { _ = recover() }()
+	expect(t, d.Size(), 0)
+	d.PopBack()
+	t.Fatal("PopBack on an empty deque should have panicked")
 }
 
 func TestPopFront(t *testing.T) {
@@ -152,6 +207,12 @@ func TestPopFront(t *testing.T) {
 	expect(t, d.PopFront(), 7)
 	expect(t, d.PopFront(), 6)
 	expect(t, d.Size(), 0)
+
+	// Test panic
+	defer func() { _ = recover() }()
+	expect(t, d.Size(), 0)
+	d.PopFront()
+	t.Fatal("PopFront on an empty deque should have panicked")
 }
 
 func TestAutoResize(t *testing.T) {
@@ -174,4 +235,29 @@ func TestAutoResize(t *testing.T) {
 
 	expect(t, d.Size(), 0)
 	expect(t, d.Cap(), 8) // Internal
+}
+
+func TestClear(t *testing.T) {
+	d := MakeDequeSized(4)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+	expect(t, d.Size(), 3)
+	d.Clear()
+	expect(t, d.Size(), 0)
+}
+
+func TestClone(t *testing.T) {
+	d := MakeDequeSized(4)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+	expect(t, d.Size(), 3)
+	c := d.Clone()
+	expect(t, c.Size(), 3)
+	expect(t, c.PopBack(), 7)
+	expect(t, c.PopBack(), 8)
+	expect(t, c.PopBack(), 9)
+	expect(t, c.Size(), 0)
+	expect(t, d.Size(), 3)
 }

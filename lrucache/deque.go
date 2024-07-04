@@ -124,6 +124,10 @@ func (d *Deque[T]) Clear() {
 	d.head = 0
 }
 
+func (d *Deque[T]) Shrink() {
+	d.shrink()
+}
+
 func (d *Deque[T]) Clone() *Deque[T] {
 	clone := &Deque[T]{
 		make([]T, d.cap),

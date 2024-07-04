@@ -238,6 +238,20 @@ func TestClone(t *testing.T) {
 	expect(t, c.PopBack(), 9)
 	expect(t, c.Len(), 0)
 	expect(t, d.Len(), 3)
+
+	// Test buffer equality and Deque.copy()
+	d = NewDeque[int](8)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+	d.PushBack(6)
+	d.PushBack(5)
+	c = d.Clone()
+
+	expect(t, d.Len(), c.Len())
+	for i := 0; i < d.Len(); i++ {
+		expect(t, d.PopBack(), c.PopBack())
+	}
 }
 
 func TestAutoResize(t *testing.T) {
@@ -278,4 +292,22 @@ func TestGenerics(t *testing.T) {
 	c.PushBack(byte(10))
 	expect(t, c.PopBack(), byte(10))
 	expect(t, c.PopBack(), byte(13))
+}
+
+func TestShrink(t *testing.T) {
+	d := NewDeque[int](128)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+
+	d.Shrink()
+	expect(t, d.Cap(), 64)
+	d.Shrink()
+	expect(t, d.Cap(), 32)
+	d.Shrink()
+	expect(t, d.Cap(), 32) // Internal (min default initial size)
+
+	expect(t, d.PopBack(), 7)
+	expect(t, d.PopBack(), 8)
+	expect(t, d.PopBack(), 9)
 }

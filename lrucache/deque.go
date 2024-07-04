@@ -52,7 +52,7 @@ func (d *Deque[T]) grow() {
 /** half the size of the buffer if the current Len will fit */
 func (d *Deque[T]) shrink() {
 	newSize := len(d.buf) / 2
-	if newSize <= INITIAL_DEQUE_SIZE || newSize <= d.Len() {
+	if newSize < INITIAL_DEQUE_SIZE || newSize <= d.Len() {
 		return
 	}
 	newBuf := make([]T, newSize)

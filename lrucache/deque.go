@@ -29,19 +29,37 @@ func NewDeque[T any](size ...int) *Deque[T] {
 	}
 }
 
+func (d *Deque[T]) copy(dst []T) int {
+	sz := min(d.Len(), len(dst))
+	p := d.tail
+	for i := 0; i < sz; i++ {
+		dst[i] = d.buf[p]
+		p = d.next(p)
+	}
+	return sz
+}
+
 /** double the size of the buffer and copy the old one over */
 func (d *Deque[T]) grow() {
 	newSize := d.cap * 2
 	newBuf := make([]T, newSize)
-	newHead := 0
-	for i := d.tail; i != d.head; i = (i + 1) % d.cap {
-		newBuf[newHead] = d.buf[i]
-		newHead++
-	}
+	d.head = d.copy(newBuf)
+	d.tail = 0
 	d.buf = newBuf
 	d.cap = newSize
+}
+
+/** half the size of the buffer if the current Len will fit */
+func (d *Deque[T]) shrink() {
+	newSize := len(d.buf) / 2
+	if newSize <= INITIAL_DEQUE_SIZE || newSize <= d.Len() {
+		return
+	}
+	newBuf := make([]T, newSize)
+	d.head = d.copy(newBuf)
 	d.tail = 0
-	d.head = newHead
+	d.buf = newBuf
+	d.cap = newSize
 }
 
 /** calculate the next index in sequence, does not detect a full buffer */
@@ -110,9 +128,9 @@ func (d *Deque[T]) Clone() *Deque[T] {
 	clone := &Deque[T]{
 		make([]T, d.cap),
 		d.cap,
-		d.head,
-		d.tail,
+		0,
+		0,
 	}
-	copy(clone.buf, d.buf)
+	clone.head = d.copy(clone.buf)
 	return clone
 }

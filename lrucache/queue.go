@@ -10,8 +10,8 @@ func MakeQueue[T any]() *Queue[T] {
 	return (*Queue[T])(MakeDeque[T]())
 }
 
-func (q *Queue[T]) Size() int {
-	return (*Deque[T])(q).Size()
+func (q *Queue[T]) Len() int {
+	return (*Deque[T])(q).Len()
 }
 
 func (q *Queue[T]) Cap() int {

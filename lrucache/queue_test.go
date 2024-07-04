@@ -6,7 +6,7 @@ import (
 
 func TestMakeQueueSized(t *testing.T) {
 	q := MakeQueueSized[int](2)
-	expect(t, q.Size(), 0)
+	expect(t, q.Len(), 0)
 }
 
 func TestMakeQueue(t *testing.T) {
@@ -17,14 +17,14 @@ func TestMakeQueue(t *testing.T) {
 
 func TestQueueSize(t *testing.T) {
 	q := MakeQueue[int]()
-	expect(t, q.Size(), 0)
+	expect(t, q.Len(), 0)
 	q.Push(9)
-	expect(t, q.Size(), 1)
+	expect(t, q.Len(), 1)
 	q.Push(9)
-	expect(t, q.Size(), 2)
+	expect(t, q.Len(), 2)
 	q.Pop()
 	q.Pop()
-	expect(t, q.Size(), 0)
+	expect(t, q.Len(), 0)
 }
 
 func TestQueueCap(t *testing.T) {
@@ -38,10 +38,10 @@ func TestQueueCap(t *testing.T) {
 func TestPush(t *testing.T) {
 	q := (*Queue[int])(MakeDequeSized[int](2))
 	q.Push(9)
-	expect(t, q.Size(), 1)
+	expect(t, q.Len(), 1)
 	q.Push(8)
 	q.Pop()
-	expect(t, q.Size(), 1)
+	expect(t, q.Len(), 1)
 }
 
 func TestPop(t *testing.T) {
@@ -64,9 +64,9 @@ func TestQueueClear(t *testing.T) {
 	d.Push(9)
 	d.Push(8)
 	d.Push(7)
-	expect(t, d.Size(), 3)
+	expect(t, d.Len(), 3)
 	d.Clear()
-	expect(t, d.Size(), 0)
+	expect(t, d.Len(), 0)
 }
 
 func TestQueueClone(t *testing.T) {
@@ -74,12 +74,12 @@ func TestQueueClone(t *testing.T) {
 	d.Push(9)
 	d.Push(8)
 	d.Push(7)
-	expect(t, d.Size(), 3)
+	expect(t, d.Len(), 3)
 	c := d.Clone()
-	expect(t, c.Size(), 3)
+	expect(t, c.Len(), 3)
 	expect(t, c.Pop(), 9)
 	expect(t, c.Pop(), 8)
 	expect(t, c.Pop(), 7)
-	expect(t, c.Size(), 0)
-	expect(t, d.Size(), 3)
+	expect(t, c.Len(), 0)
+	expect(t, d.Len(), 3)
 }

@@ -57,17 +57,10 @@ func (d *Deque[T]) prev(index int) int {
 	return index - 1
 }
 
-func (d *Deque[T]) Size() int {
-	// 0 1 2 3 4 : N==5
-	// T x x x H == 4 - 0 = 4 : always (cap - 1)
-	// . T x H . == 3 - 1 = 2 :
+func (d *Deque[T]) Len() int {
 	if d.tail <= d.head {
 		return d.head - d.tail
 	}
-
-	// 0 1 2 3 4 : N==5
-	// x H . T x == 5 - (3 - 1) = 3
-	// H . . . T == 5 - (4 - 0) = 1
 	return d.cap - (d.tail - d.head)
 }
 
@@ -76,7 +69,7 @@ func (d *Deque[T]) Cap() int {
 }
 
 func (d *Deque[T]) PushBack(v T) {
-	if d.Size() == d.cap-1 {
+	if d.Len() == d.cap-1 {
 		d.grow()
 	}
 	d.buf[d.head] = v
@@ -84,7 +77,7 @@ func (d *Deque[T]) PushBack(v T) {
 }
 
 func (d *Deque[T]) PushFront(v T) {
-	if d.Size() == d.cap-1 {
+	if d.Len() == d.cap-1 {
 		d.grow()
 	}
 	d.tail = d.prev(d.tail)
@@ -92,7 +85,7 @@ func (d *Deque[T]) PushFront(v T) {
 }
 
 func (d *Deque[T]) PopBack() T {
-	if d.Size() == 0 {
+	if d.Len() == 0 {
 		panic("can't PopBack() from an empty deque")
 	}
 	d.head = d.prev(d.head)
@@ -100,7 +93,7 @@ func (d *Deque[T]) PopBack() T {
 }
 
 func (d *Deque[T]) PopFront() T {
-	if d.Size() == 0 {
+	if d.Len() == 0 {
 		panic("can't PopFront() from an empty deque")
 	}
 	result := d.buf[d.tail]

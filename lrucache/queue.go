@@ -2,12 +2,8 @@ package main
 
 type Queue[T any] Deque[T]
 
-func MakeQueueSized[T any](size int) *Queue[T] {
-	return (*Queue[T])(MakeDequeSized[T](size))
-}
-
-func MakeQueue[T any]() *Queue[T] {
-	return (*Queue[T])(MakeDeque[T]())
+func NewQueue[T any](size ...int) *Queue[T] {
+	return (*Queue[T])(NewDeque[T](size...))
 }
 
 func (q *Queue[T]) Len() int {

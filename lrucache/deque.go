@@ -16,14 +16,14 @@ type Deque[T any] struct {
 	tail int
 }
 
-func MakeDeque[T any]() *Deque[T] {
-	return MakeDequeSized[T](INITIAL_DEQUE_SIZE)
-}
-
-func MakeDequeSized[T any](size int) *Deque[T] {
+func NewDeque[T any](size ...int) *Deque[T] {
+	sz := INITIAL_DEQUE_SIZE
+	if len(size) >= 1 {
+		sz = size[0]
+	}
 	return &Deque[T]{
-		make([]T, size),
-		size,
+		make([]T, sz),
+		sz,
 		0,
 		0,
 	}

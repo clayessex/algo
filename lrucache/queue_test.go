@@ -4,19 +4,19 @@ import (
 	"testing"
 )
 
-func TestMakeQueueSized(t *testing.T) {
-	q := MakeQueueSized[int](2)
+func TestNewQueue(t *testing.T) {
+	q := NewQueue[int](2)
 	expect(t, q.Len(), 0)
 }
 
 func TestMakeQueue(t *testing.T) {
-	if q := MakeQueue[int](); q.Cap() <= 0 {
+	if q := NewQueue[int](); q.Cap() <= 0 {
 		t.Fatalf("MakeQueue failed with size: %v\n", q.Cap())
 	}
 }
 
 func TestQueueSize(t *testing.T) {
-	q := MakeQueue[int]()
+	q := NewQueue[int]()
 	expect(t, q.Len(), 0)
 	q.Push(9)
 	expect(t, q.Len(), 1)
@@ -28,7 +28,7 @@ func TestQueueSize(t *testing.T) {
 }
 
 func TestQueueCap(t *testing.T) {
-	q := MakeQueueSized[int](2)
+	q := NewQueue[int](2)
 	expect(t, q.Cap(), 2)
 	q.Push(9)
 	q.Push(8)
@@ -36,7 +36,7 @@ func TestQueueCap(t *testing.T) {
 }
 
 func TestPush(t *testing.T) {
-	q := (*Queue[int])(MakeDequeSized[int](2))
+	q := (*Queue[int])(NewQueue[int](2))
 	q.Push(9)
 	expect(t, q.Len(), 1)
 	q.Push(8)
@@ -45,7 +45,7 @@ func TestPush(t *testing.T) {
 }
 
 func TestPop(t *testing.T) {
-	q := (*Queue[int])(MakeDequeSized[int](2))
+	q := (*Queue[int])(NewQueue[int](2))
 	q.Push(9)
 	q.Push(8)
 	q.Push(7)
@@ -60,7 +60,7 @@ func TestPop(t *testing.T) {
 }
 
 func TestQueueClear(t *testing.T) {
-	d := MakeQueueSized[int](4)
+	d := NewQueue[int](4)
 	d.Push(9)
 	d.Push(8)
 	d.Push(7)
@@ -70,7 +70,7 @@ func TestQueueClear(t *testing.T) {
 }
 
 func TestQueueClone(t *testing.T) {
-	d := MakeQueueSized[int](4)
+	d := NewQueue[int](4)
 	d.Push(9)
 	d.Push(8)
 	d.Push(7)

@@ -26,13 +26,13 @@ func expect(t *testing.T, actual interface{}, expected interface{}) {
 	}
 }
 
-func Test_internal_MakeDequeSized(t *testing.T) {
-	d := MakeDequeSized[int](4)
+func Test_internal_NewDeque(t *testing.T) {
+	d := NewDeque[int](4)
 	if d.cap != 4 {
-		t.Fatalf("MakeDequeSized failed: expected cap: %v, got %v", 4, d.cap)
+		t.Fatalf("NewDeque failed: expected cap: %v, got %v", 4, d.cap)
 	}
 	if len(d.buf) != 4 {
-		t.Fatalf("MakeDequeSized failed: expected len: %v, got %v", 4, len(d.buf))
+		t.Fatalf("NewDeque failed: expected len: %v, got %v", 4, len(d.buf))
 	}
 }
 
@@ -69,27 +69,27 @@ func Test_internal_PushBack(t *testing.T) {
 	expect(t, d, &Deque[int]{[]int{7, 6, 0, 8}, 4, 2, 3})
 }
 
-func TestMakeDequeSized(t *testing.T) {
-	d := MakeDequeSized[int](4)
+func TestNewDeque(t *testing.T) {
+	d := NewDeque[int](4)
 	expect(t, d.Cap(), 4)
 	expect(t, d.Len(), 0)
-	d = MakeDequeSized[int](32)
+	d = NewDeque[int](32)
 	expect(t, d.Cap(), 32)
 	expect(t, d.Len(), 0)
-	d = MakeDequeSized[int](1000)
+	d = NewDeque[int](1000)
 	expect(t, d.Cap(), 1000)
 	expect(t, d.Len(), 0)
 }
 
 func TestMakeDeque(t *testing.T) {
-	d := MakeDeque[int]()
+	d := NewDeque[int]()
 	if d.Cap() <= 0 { // Internal default larger than zero
 		t.Fatalf("expected: >0, got: %v\n", d.Cap())
 	}
 }
 
 func TestSize(t *testing.T) {
-	d := MakeDequeSized[int](4)
+	d := NewDeque[int](4)
 	expect(t, d.Len(), 0)
 	d.PushBack(9)
 	expect(t, d.Len(), 1)
@@ -123,7 +123,7 @@ func TestSize(t *testing.T) {
 }
 
 func TestCap(t *testing.T) {
-	d := MakeDequeSized[int](2)
+	d := NewDeque[int](2)
 	expect(t, d.Cap(), 2)
 	d.PushBack(9)
 	d.PushBack(8)
@@ -131,7 +131,7 @@ func TestCap(t *testing.T) {
 }
 
 func TestPushBack(t *testing.T) {
-	d := MakeDequeSized[int](4)
+	d := NewDeque[int](4)
 	d.PushBack(9)
 	expect(t, d.Len(), 1)
 	d.PushBack(8)
@@ -150,7 +150,7 @@ func TestPushBack(t *testing.T) {
 }
 
 func TestPushFront(t *testing.T) {
-	d := MakeDequeSized[int](4)
+	d := NewDeque[int](4)
 	d.PushFront(9)
 	expect(t, d.Len(), 1)
 	expect(t, d.PopFront(), 9)
@@ -172,7 +172,7 @@ func TestPushFront(t *testing.T) {
 }
 
 func TestPopBack(t *testing.T) {
-	d := MakeDequeSized[int](4)
+	d := NewDeque[int](4)
 	d.PushBack(9)
 	expect(t, d.Len(), 1)
 	expect(t, d.PopBack(), 9)
@@ -194,7 +194,7 @@ func TestPopBack(t *testing.T) {
 }
 
 func TestPopFront(t *testing.T) {
-	d := MakeDequeSized[int](4)
+	d := NewDeque[int](4)
 	d.PushBack(9)
 	expect(t, d.Len(), 1)
 	expect(t, d.PopFront(), 9)
@@ -216,7 +216,7 @@ func TestPopFront(t *testing.T) {
 }
 
 func TestClear(t *testing.T) {
-	d := MakeDequeSized[int](4)
+	d := NewDeque[int](4)
 	d.PushBack(9)
 	d.PushBack(8)
 	d.PushBack(7)
@@ -226,7 +226,7 @@ func TestClear(t *testing.T) {
 }
 
 func TestClone(t *testing.T) {
-	d := MakeDequeSized[int](4)
+	d := NewDeque[int](4)
 	d.PushBack(9)
 	d.PushBack(8)
 	d.PushBack(7)
@@ -241,7 +241,7 @@ func TestClone(t *testing.T) {
 }
 
 func TestAutoResize(t *testing.T) {
-	d := MakeDequeSized[int](2)
+	d := NewDeque[int](2)
 	d.PushBack(9)
 	d.PushBack(8)
 	expect(t, d.Len(), 2)
@@ -263,17 +263,17 @@ func TestAutoResize(t *testing.T) {
 }
 
 func TestGenerics(t *testing.T) {
-	a := MakeDequeSized[string](2)
+	a := NewDeque[string](2)
 	a.PushBack("test-a1")
 	a.PushBack("test-a2")
 	expect(t, a.PopBack(), "test-a2")
 	expect(t, a.PopBack(), "test-a1")
-	b := MakeDequeSized[float64](2)
+	b := NewDeque[float64](2)
 	b.PushBack(3.1415927)
 	b.PushBack(2.71828)
 	expect(t, b.PopBack(), 2.71828)   // warn: float-cmp
 	expect(t, b.PopBack(), 3.1415927) // warn: float-cmp
-	c := MakeDequeSized[byte](2)
+	c := NewDeque[byte](2)
 	c.PushBack(byte(13))
 	c.PushBack(byte(10))
 	expect(t, c.PopBack(), byte(10))

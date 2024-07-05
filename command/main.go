@@ -7,8 +7,7 @@ import (
 )
 
 func main() {
-	fmt.Println("testing a LRUCache")
 	d := vessels.NewDeque[int]()
-	d.PushBack(9)
-	fmt.Println("Test pop: ", d.PopBack())
+	d.PushBack(42)
+	fmt.Println("Pop: ", d.PopBack())
 }

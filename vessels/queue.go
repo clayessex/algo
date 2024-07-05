@@ -1,4 +1,4 @@
-package main
+package vessels
 
 type Queue[T any] Deque[T]
 

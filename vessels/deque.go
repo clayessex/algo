@@ -1,4 +1,4 @@
-package main
+package vessels
 
 /** Queue */
 const INITIAL_DEQUE_SIZE = 32

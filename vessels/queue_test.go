@@ -6,16 +6,11 @@ import (
 
 func TestNewQueue(t *testing.T) {
 	q := NewQueue[int](2)
+	expect(t, q.Cap(), 2)
 	expect(t, q.Len(), 0)
 }
 
-func TestMakeQueue(t *testing.T) {
-	if q := NewQueue[int](); q.Cap() <= 0 {
-		t.Fatalf("MakeQueue failed with size: %v\n", q.Cap())
-	}
-}
-
-func TestQueueSize(t *testing.T) {
+func TestQueueLen(t *testing.T) {
 	q := NewQueue[int]()
 	expect(t, q.Len(), 0)
 	q.Push(9)
@@ -35,28 +30,21 @@ func TestQueueCap(t *testing.T) {
 	expect(t, q.Cap(), 4) // warn: internal
 }
 
-func TestPush(t *testing.T) {
-	q := (*Queue[int])(NewQueue[int](2))
-	q.Push(9)
-	expect(t, q.Len(), 1)
-	q.Push(8)
-	q.Pop()
-	expect(t, q.Len(), 1)
-}
-
-func TestPop(t *testing.T) {
-	q := (*Queue[int])(NewQueue[int](2))
+func TestQueuePushPop(t *testing.T) {
+	q := NewQueue[int](4)
 	q.Push(9)
 	q.Push(8)
 	q.Push(7)
+	expect(t, q.Len(), 3)
 	expect(t, q.Pop(), 9)
 	expect(t, q.Pop(), 8)
 	expect(t, q.Pop(), 7)
+	expect(t, q.Len(), 0)
 
 	// detect panic
 	defer func() { _ = recover() }()
-	q.Pop()
-	t.Fatal("Queue Pop should have panicked")
+	q.Pop() // Should panic
+	t.Fatal("Queue Pop should panic when empty")
 }
 
 func TestQueueAt(t *testing.T) {

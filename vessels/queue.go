@@ -22,6 +22,10 @@ func (q *Queue[T]) Pop() T {
 	return (*Deque[T])(q).PopFront()
 }
 
+func (q *Queue[T]) At(index int) T {
+	return (*Deque[T])(q).At(index)
+}
+
 func (q *Queue[T]) Clear() {
 	(*Deque[T])(q).Clear()
 }

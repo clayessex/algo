@@ -59,6 +59,23 @@ func TestPop(t *testing.T) {
 	t.Fatal("Queue Pop should have panicked")
 }
 
+func TestQueueAt(t *testing.T) {
+	q := NewQueue[int](5)
+	q.Push(9)
+	q.Push(8)
+	q.Push(7)
+	q.Push(6)
+	expect(t, q.At(0), 9)
+	expect(t, q.Pop(), 9)
+	expect(t, q.At(0), 8)
+	expect(t, q.At(1), 7)
+	expect(t, q.At(2), 6)
+
+	defer func() { _ = recover() }()
+	q.At(3)
+	t.Fatal("Queue At() with an invalid index should have panicked")
+}
+
 func TestQueueClear(t *testing.T) {
 	d := NewQueue[int](4)
 	d.Push(9)

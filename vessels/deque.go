@@ -6,9 +6,6 @@ const INITIAL_DEQUE_SIZE = 32
 type Deque[T any] struct {
 	buf []T
 
-	/** capacity is cap - 1 */
-	cap int
-
 	/** head is the next avilable empty slot :: back/end */
 	head int
 
@@ -23,7 +20,6 @@ func NewDeque[T any](size ...int) *Deque[T] {
 	}
 	return &Deque[T]{
 		make([]T, sz),
-		sz,
 		0,
 		0,
 	}
@@ -41,12 +37,11 @@ func (d *Deque[T]) copy(dst []T) int {
 
 /** double the size of the buffer and copy the old one over */
 func (d *Deque[T]) grow() {
-	newSize := d.cap * 2
+	newSize := len(d.buf) * 2
 	newBuf := make([]T, newSize)
 	d.head = d.copy(newBuf)
 	d.tail = 0
 	d.buf = newBuf
-	d.cap = newSize
 }
 
 /** half the size of the buffer if the current Len will fit */
@@ -59,18 +54,17 @@ func (d *Deque[T]) shrink() {
 	d.head = d.copy(newBuf)
 	d.tail = 0
 	d.buf = newBuf
-	d.cap = newSize
 }
 
 /** calculate the next index in sequence, does not detect a full buffer */
 func (d *Deque[T]) next(index int) int {
-	return (index + 1) % d.cap
+	return (index + 1) % len(d.buf)
 }
 
 /** calculate the previous index in sequence, does not detect an empty buffer */
 func (d *Deque[T]) prev(index int) int {
 	if index == 0 {
-		return d.cap - 1
+		return len(d.buf) - 1
 	}
 	return index - 1
 }
@@ -79,15 +73,15 @@ func (d *Deque[T]) Len() int {
 	if d.tail <= d.head {
 		return d.head - d.tail
 	}
-	return d.cap - (d.tail - d.head)
+	return len(d.buf) - (d.tail - d.head)
 }
 
 func (d *Deque[T]) Cap() int {
-	return d.cap
+	return len(d.buf)
 }
 
 func (d *Deque[T]) PushBack(v T) {
-	if d.Len() == d.cap-1 {
+	if d.Len() == len(d.buf)-1 {
 		d.grow()
 	}
 	d.buf[d.head] = v
@@ -95,7 +89,7 @@ func (d *Deque[T]) PushBack(v T) {
 }
 
 func (d *Deque[T]) PushFront(v T) {
-	if d.Len() == d.cap-1 {
+	if d.Len() == len(d.buf)-1 {
 		d.grow()
 	}
 	d.tail = d.prev(d.tail)
@@ -130,8 +124,7 @@ func (d *Deque[T]) Shrink() {
 
 func (d *Deque[T]) Clone() *Deque[T] {
 	clone := &Deque[T]{
-		make([]T, d.cap),
-		d.cap,
+		make([]T, len(d.buf)),
 		0,
 		0,
 	}

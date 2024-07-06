@@ -148,6 +148,28 @@ func (d *Deque[T]) PopFront() T {
 }
 
 /**
+ * return the first element from the beginning of the Deque without removing it,
+ * panics if the Deque is empty
+ */
+func (d *Deque[T]) Front() T {
+	if d.Len() == 0 {
+		panic("can't get front() element from an empty deque")
+	}
+	return d.buf[d.tail]
+}
+
+/**
+ * return the last element from the end of the Deque without removing it,
+ * panics if the Deque is empty
+ */
+func (d *Deque[T]) Back() T {
+	if d.Len() == 0 {
+		panic("can't get back() element from an empty deque")
+	}
+	return d.buf[d.prev(d.head)]
+}
+
+/**
  * return the element at index without removing it,
  * panics if index is outside of range [0:Len()]
  */

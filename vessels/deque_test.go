@@ -235,6 +235,42 @@ func TestPopFront(t *testing.T) {
 	t.Fatal("PopFront on an empty deque should have panicked")
 }
 
+func TestDequeFront(t *testing.T) {
+	d := NewDeque[int](4)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+	expect(t, d.Len(), 3)
+	expect(t, d.Front(), 9)
+	expect(t, d.Len(), 3)
+
+	expect(t, d.PopBack(), 7)
+	expect(t, d.PopBack(), 8)
+	expect(t, d.PopBack(), 9)
+
+	defer func() { _ = recover() }()
+	d.Front()
+	t.Fatal("Front() on empty Deque should panic")
+}
+
+func TestDequeBack(t *testing.T) {
+	d := NewDeque[int](4)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+	expect(t, d.Len(), 3)
+	expect(t, d.Back(), 7)
+	expect(t, d.Len(), 3)
+
+	expect(t, d.PopBack(), 7)
+	expect(t, d.PopBack(), 8)
+	expect(t, d.PopBack(), 9)
+
+	defer func() { _ = recover() }()
+	d.Back()
+	t.Fatal("Back() on empty Deque should panic")
+}
+
 func TestAt(t *testing.T) {
 	d := NewDeque[int](4)
 	d.PushBack(9)

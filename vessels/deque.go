@@ -147,6 +147,18 @@ func (d *Deque[T]) PopFront() T {
 	return result
 }
 
+/**
+ * return the element at index without removing it,
+ * panics if index is outside of range [0:Len()]
+ */
+func (d *Deque[T]) At(index int) T {
+	if index < 0 || index >= d.Len() {
+		panic("Deque At() invalid index")
+	}
+	offset := (d.tail + index) % len(d.buf)
+	return d.buf[offset]
+}
+
 /** remove all elements, leaving the deque empty */
 func (d *Deque[T]) Clear() {
 	d.tail = 0

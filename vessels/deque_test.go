@@ -66,7 +66,7 @@ func Test_internal_copy(t *testing.T) {
 	b = make([]int, 2)
 	// Copy to an undersized buffer panics
 	d.copy(b)
-	t.Fatal("PopFront on an empty deque should have panicked")
+	t.Fatal("Deque copy() to a smaller buffer should have panicked")
 }
 
 func Test_internal_PushBack(t *testing.T) {
@@ -233,6 +233,19 @@ func TestPopFront(t *testing.T) {
 	expect(t, d.Len(), 0)
 	d.PopFront()
 	t.Fatal("PopFront on an empty deque should have panicked")
+}
+
+func TestAt(t *testing.T) {
+	d := NewDeque[int](4)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+	d.PopFront()
+	expect(t, d.At(0), 8)
+	expect(t, d.At(1), 7)
+	defer func() { _ = recover() }()
+	d.At(2)
+	t.Fatal("deque At() with an invalid index should have panicked")
 }
 
 func TestClear(t *testing.T) {

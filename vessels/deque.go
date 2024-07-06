@@ -45,15 +45,22 @@ func NewDeque[T any](size ...int) *Deque[T] {
 	}
 }
 
-/** copy the deque buffer into dst */
+/**
+ * copy the deque buffer into dst, panics if dst is not large enough
+ * returns number of elements copied
+ */
 func (d *Deque[T]) copy(dst []T) int {
-	sz := min(d.Len(), len(dst))
-	p := d.tail
-	for i := 0; i < sz; i++ {
-		dst[i] = d.buf[p]
-		p = d.next(p)
+	if len(dst) < d.Len() {
+		panic("deque too large to copy to dst")
 	}
-	return sz
+	var n int
+	if d.tail <= d.head {
+		n = copy(dst, d.buf[d.tail:d.head])
+	} else {
+		n = copy(dst, d.buf[d.tail:])
+		n += copy(dst[n:], d.buf[:d.head])
+	}
+	return n
 }
 
 /** double the size of the buffer and copy the old one over */

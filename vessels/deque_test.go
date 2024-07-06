@@ -49,6 +49,26 @@ func Test_internal_DequeSize(t *testing.T) {
 	expect(t, d.Len(), 3)
 }
 
+func Test_internal_copy(t *testing.T) {
+	d := NewDeque[int](10)
+	d.PushBack(9)
+	d.PushBack(8)
+	d.PushBack(7)
+	d.PushBack(6)
+	expect(t, d.Len(), 4)
+
+	b := make([]int, 4)
+	d.copy(b)
+	expect(t, b, []int{9, 8, 7, 6})
+
+	// Test expected panic
+	defer func() { _ = recover() }()
+	b = make([]int, 2)
+	// Copy to an undersized buffer panics
+	d.copy(b)
+	t.Fatal("PopFront on an empty deque should have panicked")
+}
+
 func Test_internal_PushBack(t *testing.T) {
 	d := &Deque[int]{[]int{0, 0}, 0, 0}
 	d.PushBack(9)

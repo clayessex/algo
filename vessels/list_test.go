@@ -35,8 +35,10 @@ func TestListNode(t *testing.T) {
 
 func TestListNode_internal_insertBefore(t *testing.T) {
 	n := &ListNode[int]{nil, nil, 9}
-	n.insertBefore(&ListNode[int]{nil, nil, 8})
-	n.Prev().insertBefore(&ListNode[int]{nil, nil, 7})
+	(&ListNode[int]{nil, nil, 8}).insertBefore(n)
+	(&ListNode[int]{nil, nil, 7}).insertBefore(n)
+	expect(t, n.prev.value, 7)
+	expect(t, n.prev.prev.value, 8)
 	defer func() { _ = recover() }()
 	n.insertBefore(nil)
 	t.Fatal("ListNode insertBefore should panic with a nil node")
@@ -44,8 +46,10 @@ func TestListNode_internal_insertBefore(t *testing.T) {
 
 func TestListNode_internal_insertAfter(t *testing.T) {
 	n := &ListNode[int]{nil, nil, 9}
-	n.insertAfter(&ListNode[int]{nil, nil, 8})
-	n.insertAfter(&ListNode[int]{nil, nil, 7})
+	(&ListNode[int]{nil, nil, 8}).insertAfter(n)
+	(&ListNode[int]{nil, nil, 7}).insertAfter(n)
+	expect(t, n.next.value, 7)
+	expect(t, n.next.next.value, 8)
 	defer func() { _ = recover() }()
 	n.insertAfter(nil)
 	t.Fatal("ListNode insertAfter should panic with a nil node")

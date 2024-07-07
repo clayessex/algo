@@ -20,32 +20,32 @@ func (n *ListNode[T]) Prev() *ListNode[T] {
 	return n.prev
 }
 
-/** insert v before n */
-func (n *ListNode[T]) insertBefore(v *ListNode[T]) *ListNode[T] {
-	if n == nil || v == nil {
+/** insert n before p */
+func (n *ListNode[T]) insertBefore(p *ListNode[T]) *ListNode[T] {
+	if n == nil || p == nil {
 		panic("ListNode insertBefore invalid nil node")
 	}
-	if n.prev != nil {
-		n.prev.next = v
+	if p.prev != nil {
+		p.prev.next = n
 	}
-	v.prev = n.prev
-	v.next = n
-	n.prev = v
-	return v
+	n.prev = p.prev
+	n.next = p
+	p.prev = n
+	return n
 }
 
-/** insert v after n */
-func (n *ListNode[T]) insertAfter(v *ListNode[T]) *ListNode[T] {
-	if n == nil || v == nil {
+/** insert n after p */
+func (n *ListNode[T]) insertAfter(p *ListNode[T]) *ListNode[T] {
+	if n == nil || p == nil {
 		panic("ListNode insertAfter invalid nil node")
 	}
-	if n.next != nil {
-		n.next.prev = v
+	if p.next != nil {
+		p.next.prev = n
 	}
-	v.next = n.next
-	v.prev = n
-	n.next = v
-	return v
+	n.next = p.next
+	n.prev = p
+	p.next = n
+	return n
 }
 
 func (n *ListNode[T]) remove() *ListNode[T] {
@@ -83,10 +83,10 @@ func (l *List[T]) insert(v T, pos *ListNode[T]) *ListNode[T] {
 
 	if pos == nil { // append
 		if l.tail != nil {
-			l.tail.insertAfter(n)
+			n.insertAfter(l.tail)
 		}
 	} else {
-		pos.insertBefore(n)
+		n.insertBefore(pos)
 	}
 	if n.Prev() == nil {
 		l.head = n

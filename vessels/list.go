@@ -6,16 +6,6 @@ type ListNode[T any] struct {
 	value T
 }
 
-type List[T any] struct {
-	head *ListNode[T] // first node
-	tail *ListNode[T] // last node
-	len  int
-}
-
-func NewList[T any]() *List[T] {
-	return &List[T]{nil, nil, 0}
-}
-
 func (n *ListNode[T]) Next() *ListNode[T] {
 	if n == nil {
 		return nil
@@ -30,64 +20,96 @@ func (n *ListNode[T]) Prev() *ListNode[T] {
 	return n.prev
 }
 
+/** insert v before n */
+func (n *ListNode[T]) insertBefore(v *ListNode[T]) *ListNode[T] {
+	if n == nil || v == nil {
+		panic("ListNode insertBefore invalid nil node")
+	}
+	if n.prev != nil {
+		n.prev.next = v
+	}
+	v.prev = n.prev
+	v.next = n
+	n.prev = v
+	return v
+}
+
+/** insert v after n */
+func (n *ListNode[T]) insertAfter(v *ListNode[T]) *ListNode[T] {
+	if n == nil || v == nil {
+		panic("ListNode insertAfter invalid nil node")
+	}
+	if n.next != nil {
+		n.next.prev = v
+	}
+	v.next = n.next
+	v.prev = n
+	n.next = v
+	return v
+}
+
+func (n *ListNode[T]) remove() *ListNode[T] {
+	if n == nil {
+		panic("ListNode remove invalid nil node")
+	}
+	if n.prev != nil {
+		n.prev.next = n.next
+	}
+	if n.next != nil {
+		n.next.prev = n.prev
+	}
+	n.prev = nil // prevent memory leak (maybe)
+	n.next = nil
+	return n
+}
+
+type List[T any] struct {
+	head *ListNode[T] // first node
+	tail *ListNode[T] // last node
+	len  int
+}
+
+func NewList[T any]() *List[T] {
+	return &List[T]{nil, nil, 0}
+}
+
 func (l *List[T]) Len() int {
 	return l.len
 }
 
-// insert before pos, return new node
+// insert before pos or append if pos is nil, return new node
 func (l *List[T]) insert(v T, pos *ListNode[T]) *ListNode[T] {
-	right := pos
+	n := &ListNode[T]{nil, nil, v}
 
-	var left *ListNode[T] = nil
-	if pos == nil {
-		left = l.tail
+	if pos == nil { // append
+		if l.tail != nil {
+			l.tail.insertAfter(n)
+		}
 	} else {
-		left = pos.Prev()
+		pos.insertBefore(n)
 	}
-
-	n := &ListNode[T]{right, left, v}
-
-	if left == nil {
+	if n.Prev() == nil {
 		l.head = n
-	} else {
-		left.next = n
 	}
-
-	if right == nil {
+	if n.Next() == nil {
 		l.tail = n
-	} else {
-		right.prev = n
 	}
-
 	l.len++
 	return n
 }
 
-// returns removed node
+// remove pos from list, returns removed node
 func (l *List[T]) remove(pos *ListNode[T]) *ListNode[T] {
 	if pos == nil {
-		panic("invalid pos deleting from List")
+		panic("List remove invalid pos")
 	}
-
-	left := pos.Prev()
-	right := pos.Next()
-
-	// prevent memory leaks (maybe)
-	pos.next = nil
-	pos.prev = nil
-
-	if left == nil {
-		l.head = right
-	} else {
-		left.next = right
+	if l.head == pos {
+		l.head = pos.Next()
 	}
-
-	if right == nil {
-		l.tail = left
-	} else {
-		right.prev = left
+	if l.tail == pos {
+		l.tail = pos.Prev()
 	}
-
+	pos.remove()
 	l.len--
 	return pos
 }

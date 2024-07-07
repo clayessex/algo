@@ -26,6 +26,12 @@ func expect(t *testing.T, actual interface{}, expected interface{}) {
 	}
 }
 
+func expectNil(t *testing.T, actual interface{}) {
+	if !reflect.ValueOf(actual).IsNil() {
+		t.Fatalf("%s failed: expected %v to be nil", t.Name(), actual)
+	}
+}
+
 func Test_internal_NewDeque(t *testing.T) {
 	d := NewDeque[int](4)
 	if len(d.buf) != 4 {

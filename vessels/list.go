@@ -63,6 +63,10 @@ func (n *ListNode[T]) remove() *ListNode[T] {
 	return n
 }
 
+func (n *ListNode[T]) Swap(o *ListNode[T]) {
+	n.value, o.value = o.value, n.value
+}
+
 type List[T any] struct {
 	head *ListNode[T] // first node
 	tail *ListNode[T] // last node
@@ -173,11 +177,9 @@ func (l *List[T]) Reverse() {
 		return
 	}
 
-	p := l.head
-	next := l.head.Next()
-	p.remove()
-	newTail := p
-	newHead := p
+	p, next := l.head, l.head.Next()
+	newHead := p.remove()
+	newTail := newHead
 	p, next = next, next.Next()
 
 	for p != nil {

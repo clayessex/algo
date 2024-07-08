@@ -65,6 +65,21 @@ func TestListNode_internal_remove(t *testing.T) {
 	t.Fatal("ListNode remove should panic with nil node")
 }
 
+func TestListNode_internal_Swap(t *testing.T) {
+	a := &ListNode[int]{nil, nil, 3}
+	b := &ListNode[int]{nil, nil, 9}
+	b.insertAfter(a)
+	expect(t, a.next, b)
+	expect(t, b.prev, a)
+	expect(t, a.value, 3)
+	expect(t, b.value, 9)
+	a.Swap(b)
+	expect(t, a.value, 9)
+	expect(t, b.value, 3)
+	expect(t, a.next, b)
+	expect(t, b.prev, a)
+}
+
 func TestListLen(t *testing.T) {
 	l := NewList[int]()
 	expect(t, l.Len(), 0)
@@ -208,4 +223,8 @@ func TestListReverse(t *testing.T) {
 	expect(t, l.At(2), 7)
 	expect(t, l.At(3), 8)
 	expect(t, l.At(4), 9)
+	l.Clear()
+	l.PushBack(1)
+	l.Reverse()
+	expect(t, l.At(0), 1)
 }

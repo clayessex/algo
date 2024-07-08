@@ -189,3 +189,23 @@ func TestListAt(t *testing.T) {
 	l.At(l.Len())
 	t.Fatal("List At() should panic with invalid index")
 }
+
+func TestListReverse(t *testing.T) {
+	l := NewList[int]()
+	l.PushBack(9)
+	l.PushBack(8)
+	l.PushBack(7)
+	l.PushBack(6)
+	l.PushBack(5)
+	expect(t, l.At(0), 9)
+	expect(t, l.At(1), 8)
+	expect(t, l.At(2), 7)
+	expect(t, l.At(3), 6)
+	expect(t, l.At(4), 5)
+	l.Reverse()
+	expect(t, l.At(0), 5)
+	expect(t, l.At(1), 6)
+	expect(t, l.At(2), 7)
+	expect(t, l.At(3), 8)
+	expect(t, l.At(4), 9)
+}

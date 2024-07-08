@@ -168,6 +168,26 @@ func (l *List[T]) At(index int) T {
 	return p.value
 }
 
+func (l *List[T]) Reverse() {
+	if l.Len() < 2 {
+		return
+	}
+
+	p := l.head
+	next := l.head.Next()
+	p.remove()
+	newTail := p
+	newHead := p
+
+	for p != nil {
+		newHead = p.remove().insertBefore(newHead)
+		p, next = next, next.Next()
+	}
+
+	l.head = newHead
+	l.tail = newTail
+}
+
 // TODO: iterations
 // foreach
 // find

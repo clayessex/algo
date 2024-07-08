@@ -178,6 +178,7 @@ func (l *List[T]) Reverse() {
 	p.remove()
 	newTail := p
 	newHead := p
+	p, next = next, next.Next()
 
 	for p != nil {
 		newHead = p.remove().insertBefore(newHead)

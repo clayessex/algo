@@ -9,21 +9,21 @@ func TestNewList(t *testing.T) {
 	expect(t, l.Len(), 0)
 }
 
+func TestNewListNode(t *testing.T) {
+	n := NewListNode(42)
+	expect(t, n.value, 42)
+	expect(t, n.next, n)
+	expect(t, n.prev, n)
+}
+
 func TestListNode(t *testing.T) {
-	// Next/Prev work on nil pointer
-	var n *ListNode[int] = nil
-	expectNil(t, n.Next())
-	expectNil(t, n.Prev())
-
-	// Next/Prev work on valid pointer to nil nodes
-	n = &ListNode[int]{nil, nil, 0}
-	expectNil(t, n.Next())
-	expectNil(t, n.Prev())
-
+	n := NewListNode(42)
+	expect(t, n.next, n)
+	expect(t, n.prev, n)
 	// Next/Prev work on valid pointer to valid nodes
-	l := &ListNode[int]{nil, nil, 0}
-	r := &ListNode[int]{nil, nil, 0}
-	n = &ListNode[int]{nil, nil, 0}
+	l := NewListNode(0)
+	r := NewListNode(0)
+	n = NewListNode(0)
 	l.next = n
 	n.next = r
 	r.prev = n
@@ -34,40 +34,39 @@ func TestListNode(t *testing.T) {
 }
 
 func TestListNode_internal_insertBefore(t *testing.T) {
-	n := &ListNode[int]{nil, nil, 9}
-	(&ListNode[int]{nil, nil, 8}).insertBefore(n)
-	(&ListNode[int]{nil, nil, 7}).insertBefore(n)
-	expect(t, n.prev.value, 7)
-	expect(t, n.prev.prev.value, 8)
-	defer func() { _ = recover() }()
-	n.insertBefore(nil)
-	t.Fatal("ListNode insertBefore should panic with a nil node")
+	n := NewListNode(9)
+	a := NewListNode(7)
+	b := NewListNode(8)
+	a.insertBefore(n)
+	b.insertBefore(n)
+	expect(t, n.prev.value, 8)
+	expect(t, n.prev.prev.value, 7)
 }
 
 func TestListNode_internal_insertAfter(t *testing.T) {
-	n := &ListNode[int]{nil, nil, 9}
-	(&ListNode[int]{nil, nil, 8}).insertAfter(n)
-	(&ListNode[int]{nil, nil, 7}).insertAfter(n)
-	expect(t, n.next.value, 7)
-	expect(t, n.next.next.value, 8)
-	defer func() { _ = recover() }()
-	n.insertAfter(nil)
-	t.Fatal("ListNode insertAfter should panic with a nil node")
+	n := NewListNode(9)
+	a := NewListNode(7)
+	b := NewListNode(8)
+	a.insertAfter(n)
+	b.insertAfter(n)
+	expect(t, n.next.value, 8)
+	expect(t, n.next.next.value, 7)
 }
 
 func TestListNode_internal_remove(t *testing.T) {
-	n := &ListNode[int]{nil, nil, 9}
-	n.insertBefore(&ListNode[int]{nil, nil, 8})
-	n.insertAfter(&ListNode[int]{nil, nil, 7})
-	n.remove()
-	defer func() { _ = recover() }()
-	(*ListNode[int])(nil).remove()
-	t.Fatal("ListNode remove should panic with nil node")
+	n := NewListNode(8)
+	a := NewListNode(7)
+	b := NewListNode(9)
+	a.insertBefore(n)
+	b.insertAfter(n)
+	expect(t, n.remove().value, 8)
+	expect(t, a.next, b)
+	expect(t, b.prev, a)
 }
 
 func TestListNode_internal_Swap(t *testing.T) {
-	a := &ListNode[int]{nil, nil, 3}
-	b := &ListNode[int]{nil, nil, 9}
+	a := NewListNode(3)
+	b := NewListNode(9)
 	b.insertAfter(a)
 	expect(t, a.next, b)
 	expect(t, b.prev, a)
@@ -91,10 +90,10 @@ func TestListLen(t *testing.T) {
 
 func TestListInsertBefore(t *testing.T) {
 	l := NewList[int]()
-	l.InsertBefore(9, nil)
+	l.InsertBefore(8, l.End())
 	expect(t, l.Len(), 1)
-	l.InsertBefore(7, l.Front())
-	l.InsertBefore(8, l.Back())
+	l.InsertBefore(7, l.Begin())
+	l.InsertBefore(9, l.End())
 	expect(t, l.Len(), 3)
 	expect(t, l.At(0), 7)
 	expect(t, l.At(1), 8)
@@ -103,14 +102,14 @@ func TestListInsertBefore(t *testing.T) {
 
 func TestListInsertAfter(t *testing.T) {
 	l := NewList[int]()
-	l.InsertAfter(9, nil)
+	l.InsertAfter(9, l.head)
 	expect(t, l.Len(), 1)
-	l.InsertAfter(8, l.Front())
-	l.InsertAfter(7, l.Back())
+	l.InsertAfter(7, l.End())
+	l.InsertAfter(8, l.Begin())
 	expect(t, l.Len(), 3)
-	expect(t, l.At(0), 9)
+	expect(t, l.At(0), 7)
 	expect(t, l.At(1), 8)
-	expect(t, l.At(2), 7)
+	expect(t, l.At(2), 9)
 }
 
 func TestListPushBack(t *testing.T) {
@@ -187,8 +186,8 @@ func TestListClear(t *testing.T) {
 	l.PushBack(7)
 	l.Clear()
 	expect(t, l.Len(), 0)
-	expectNil(t, l.Front())
-	expectNil(t, l.Back())
+	expect(t, l.Begin(), l.head)
+	expect(t, l.End(), l.head)
 }
 
 func TestListAt(t *testing.T) {

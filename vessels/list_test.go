@@ -88,6 +88,56 @@ func TestListLen(t *testing.T) {
 	expect(t, l.Len(), 3)
 }
 
+func TestListIsEmpty(t *testing.T) {
+	l := NewList[int]()
+	expect(t, l.isEmpty(), true)
+	l.PushBack(9)
+	expect(t, l.isEmpty(), false)
+}
+
+func TestListSwap(t *testing.T) {
+	a := NewList[int]()
+	a.PushBack(9)
+	a.PushBack(8)
+	a.PushBack(7)
+	b := NewList[int]()
+	b.PushBack(6)
+	b.PushBack(5)
+	b.PushBack(4)
+
+	a.Swap(b)
+	expect(t, a.Len(), 3)
+	expect(t, a.At(0), 6)
+	expect(t, a.At(1), 5)
+	expect(t, a.At(2), 4)
+}
+
+func TestListFront(t *testing.T) {
+	l := NewList[int]()
+	l.PushBack(9)
+	expect(t, l.Front(), 9)
+	l.PushFront(8)
+	expect(t, l.Front(), 8)
+
+	defer func() { _ = recover() }()
+	l = NewList[int]()
+	l.Front()
+	t.Fatal("list Front() should panic on an empty list")
+}
+
+func TestListBack(t *testing.T) {
+	l := NewList[int]()
+	l.PushBack(9)
+	expect(t, l.Back(), 9)
+	l.PushFront(8)
+	expect(t, l.Back(), 9)
+
+	defer func() { _ = recover() }()
+	l = NewList[int]()
+	l.Back()
+	t.Fatal("list Front() should panic on an empty list")
+}
+
 func TestListInsertBefore(t *testing.T) {
 	l := NewList[int]()
 	l.InsertBefore(8, l.End())

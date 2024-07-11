@@ -1,5 +1,7 @@
 package vessels
 
+import "cmp"
+
 type ListNode[T any] struct {
 	next  *ListNode[T]
 	prev  *ListNode[T]
@@ -170,6 +172,53 @@ func (list *List[T]) Reverse() {
 	for i := 0; i < list.len; i++ {
 		p = list.Begin().remove().insertBefore(p)
 	}
+}
+
+func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) *ListNode[T] {
+	oleft := first.prev
+	oright := last
+	last = last.prev
+	left := pos.prev
+	right := pos
+
+	// cut from old
+	oleft.next = oright
+	oright.prev = oleft
+
+	// splice to new
+	left.next = first
+	first.prev = left
+	right.prev = last
+	last.next = right
+
+	return oright
+}
+
+/** merge two sorted lists, [first2, last2) into [first1, last1) */
+func merge[T cmp.Ordered](
+	first1 *ListNode[T], last1 *ListNode[T],
+	first2 *ListNode[T], last2 *ListNode[T],
+) *ListNode[T] {
+	newBegin := first1 // TODO: subopt
+	if first2.value < first1.value {
+		newBegin = first2
+	}
+
+	for first1 != last1 && first2 != last2 {
+		if first2.value < first1.value {
+			next := first2.next
+			splice(first1, first2, next)
+			first2 = next
+		} else {
+			first1 = first1.next
+		}
+	}
+
+	if first2 != last2 {
+		splice(last1, first2, last2)
+	}
+
+	return newBegin
 }
 
 // TODO: iterations

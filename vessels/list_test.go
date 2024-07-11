@@ -277,3 +277,64 @@ func TestListReverse(t *testing.T) {
 	l.Reverse()
 	expect(t, l.At(0), 1)
 }
+
+func TestList_internal_splice(t *testing.T) {
+	a := NewList[int]()
+	a.PushBack(9)
+	a.PushBack(8)
+	a.PushBack(7)
+	b := NewList[int]()
+	b.PushBack(6)
+	b.PushBack(5)
+	b.PushBack(4)
+
+	splice(a.Begin().Next(), b.Begin(), b.End())
+	a.len += 3
+
+	expect(t, a.Len(), 6)
+
+	expect(t, a.At(0), 9)
+	expect(t, a.At(1), 6)
+	expect(t, a.At(2), 5)
+	expect(t, a.At(3), 4)
+	expect(t, a.At(4), 8)
+	expect(t, a.At(5), 7)
+}
+
+func expectSequence(t *testing.T, first *ListNode[int], last *ListNode[int]) {
+	count := first.value
+	for i := first; i != last; i = i.next {
+		expect(t, i.value, count)
+		count++
+	}
+}
+
+func createLists(a []int, b []int) (*List[int], *List[int]) {
+	first := NewList[int]()
+	second := NewList[int]()
+	for _, v := range a {
+		first.PushBack(v)
+	}
+	for _, v := range b {
+		second.PushBack(v)
+	}
+	return first, second
+}
+
+func TestList_internal_merge(t *testing.T) {
+	a, b := createLists([]int{5, 7, 9}, []int{4, 6, 8})
+	c := merge(a.Begin(), a.End(), b.Begin(), b.End())
+	expectSequence(t, c, a.End())
+
+	a, b = createLists([]int{5, 6, 9}, []int{7, 8, 10})
+	c = merge(a.Begin(), a.End(), b.Begin(), b.End())
+	expectSequence(t, c, a.End())
+
+	a, b = createLists([]int{4, 5, 6}, []int{1, 2, 3})
+	c = merge(a.Begin(), a.End(), b.Begin(), b.End())
+	expectSequence(t, c, a.End())
+
+	a, b = createLists([]int{1, 2, 3}, []int{4, 5, 6})
+	c = merge(a.Begin(), a.End(), b.Begin(), b.End())
+	expectSequence(t, c, a.End())
+}

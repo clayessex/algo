@@ -1,7 +1,6 @@
 package vessels
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -18,18 +17,6 @@ func dequeBufferContains[T comparable](d *Deque[T], want []T) bool {
 
 func makeTestDeque[T any](values []T, head int, tail int) *Deque[T] {
 	return &Deque[T]{values, head, tail}
-}
-
-func expect(t *testing.T, actual interface{}, expected interface{}) {
-	if !reflect.DeepEqual(expected, actual) {
-		t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", t.Name(), expected, actual)
-	}
-}
-
-func expectNil(t *testing.T, actual interface{}) {
-	if !reflect.ValueOf(actual).IsNil() {
-		t.Fatalf("%s failed: expected %v to be nil", t.Name(), actual)
-	}
 }
 
 func Test_internal_NewDeque(t *testing.T) {

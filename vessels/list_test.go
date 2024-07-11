@@ -301,14 +301,6 @@ func TestList_internal_splice(t *testing.T) {
 	expect(t, a.At(5), 7)
 }
 
-func expectSequence(t *testing.T, first *ListNode[int], last *ListNode[int]) {
-	count := first.value
-	for i := first; i != last; i = i.next {
-		expect(t, i.value, count)
-		count++
-	}
-}
-
 func createLists(a []int, b []int) (*List[int], *List[int]) {
 	first := NewList[int]()
 	second := NewList[int]()

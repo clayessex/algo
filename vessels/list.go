@@ -142,8 +142,10 @@ func (list *List[T]) PopFront() T {
 	return list.remove(list.head.next).value
 }
 
-func (list *List[T]) Append(v T) *ListNode[T] {
-	return list.PushBack(v)
+func (list *List[T]) Append(v ...T) {
+	for _, el := range v {
+		list.PushBack(el)
+	}
 }
 
 func (list *List[T]) Clear() {
@@ -193,34 +195,31 @@ func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
 }
 
 /** merge two sorted lists, [first2, last2) into [first1, last1) */
-// func mergeX[T cmp.Ordered](
-// 	first1 *ListNode[T], last1 *ListNode[T],
-// 	first2 *ListNode[T], last2 *ListNode[T],
-// ) (*ListNode[T], *ListNode[T]) {
-// 	newEnd := last1
-// 	newBegin := first1 // TODO: subopt
-// 	if first2.value < first1.value {
-// 		newBegin = first2
-// 	}
-//
-// 	for first1 != last1 && first2 != last2 {
-// 		if first2.value < first1.value {
-// 			next := first2.next
-// 			splice(first1, first2, next)
-// 			first2 = next
-// 		} else {
-// 			first1 = first1.next
-// 		}
-// 		newEnd = first1
-// 	}
-//
-// 	if first2 != last2 {
-// 		splice(last1, first2, last2)
-// 		newEnd = last1
-// 	}
-//
-// 	return newBegin, newEnd
-// }
+func mergeNodes[T cmp.Ordered](
+	first1 *ListNode[T], last1 *ListNode[T],
+	first2 *ListNode[T], last2 *ListNode[T],
+) *ListNode[T] {
+	newBegin := first1 // TODO: subopt
+	if first2.value < first1.value {
+		newBegin = first2
+	}
+
+	for first1 != last1 && first2 != last2 {
+		if first2.value < first1.value {
+			next := first2.next
+			splice(first1, first2, next)
+			first2 = next
+		} else {
+			first1 = first1.next
+		}
+	}
+
+	if first2 != last2 {
+		splice(last1, first2, last2)
+	}
+
+	return newBegin
+}
 
 // Merge sorted list b into sorted list a and return a
 func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
@@ -252,6 +251,26 @@ func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
 	a.len += b.len
 	b.len = 0
 	return a
+}
+
+// return first + size
+func sortNodes[T cmp.Ordered](first *ListNode[T], size int) *ListNode[T] {
+	switch size {
+	case 0:
+		return first
+	case 1:
+		return first.next
+	default:
+		break
+	}
+
+	last1 := sortNodes(first, size/2)
+	last2 := sortNodes(last1, size-(size/2))
+	return mergeNodes(first, last1, last1, last2)
+}
+
+func SortList[T cmp.Ordered](list *List[T]) {
+	sortNodes(list.Begin(), list.Len())
 }
 
 // func sort[T cmp.Ordered](first *ListNode[T], size int) (*ListNode[T], *ListNode[T]) {

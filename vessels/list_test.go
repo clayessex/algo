@@ -221,12 +221,14 @@ func TestListPopFront(t *testing.T) {
 func TestListAppend(t *testing.T) {
 	l := NewList[int]()
 	l.Append(9)
-	l.Append(8)
-	l.Append(7)
-	expect(t, l.Len(), 3)
+	expect(t, l.Len(), 1)
+	expect(t, l.At(0), 9)
+	l.Append(8, 7, 6)
+	expect(t, l.Len(), 4)
 	expect(t, l.At(0), 9)
 	expect(t, l.At(1), 8)
 	expect(t, l.At(2), 7)
+	expect(t, l.At(3), 6)
 }
 
 func TestListClear(t *testing.T) {
@@ -336,4 +338,8 @@ func TestList_internal_merge(t *testing.T) {
 	a, b = createLists([]int{1, 2, 8, 9}, []int{3, 4, 5, 6, 7})
 	c = merge(a, b)
 	expectSequence(t, c.Begin(), c.End())
+}
+
+func TestListSortList(t *testing.T) {
+	// list := NewList[int]()
 }

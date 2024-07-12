@@ -341,5 +341,11 @@ func TestList_internal_merge(t *testing.T) {
 }
 
 func TestListSortList(t *testing.T) {
-	// list := NewList[int]()
+	list := NewList[int]()
+	list.Append(6, 2, 4, 7, 8, 9, 1, 3, 5)
+	SortList(list)
+	for i := 0; i < list.Len(); i++ {
+		t.Logf("%v\n", list.At(i))
+	}
+	expectSequence(t, list.Begin(), list.End())
 }

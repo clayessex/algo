@@ -315,18 +315,18 @@ func createLists(a []int, b []int) (*List[int], *List[int]) {
 
 func TestList_internal_merge(t *testing.T) {
 	a, b := createLists([]int{5, 7, 9}, []int{4, 6, 8})
-	c := merge(a.Begin(), a.End(), b.Begin(), b.End())
-	expectSequence(t, c, a.End())
+	c := merge(a, b)
+	expectSequence(t, c.Begin(), c.End())
 
 	a, b = createLists([]int{5, 6, 9}, []int{7, 8, 10})
-	c = merge(a.Begin(), a.End(), b.Begin(), b.End())
-	expectSequence(t, c, a.End())
+	c = merge(a, b)
+	expectSequence(t, c.Begin(), c.End())
 
 	a, b = createLists([]int{4, 5, 6}, []int{1, 2, 3})
-	c = merge(a.Begin(), a.End(), b.Begin(), b.End())
-	expectSequence(t, c, a.End())
+	c = merge(a, b)
+	expectSequence(t, c.Begin(), c.End())
 
 	a, b = createLists([]int{1, 2, 3}, []int{4, 5, 6})
-	c = merge(a.Begin(), a.End(), b.Begin(), b.End())
-	expectSequence(t, c, a.End())
+	c = merge(a, b)
+	expectSequence(t, c.Begin(), c.End())
 }

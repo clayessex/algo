@@ -317,6 +317,9 @@ func TestList_internal_merge(t *testing.T) {
 	a, b := createLists([]int{5, 7, 9}, []int{4, 6, 8})
 	c := merge(a, b)
 	expectSequence(t, c.Begin(), c.End())
+	expect(t, a, c)
+	expect(t, b.Len(), 0)
+	expect(t, a.Len(), 6)
 
 	a, b = createLists([]int{5, 6, 9}, []int{7, 8, 10})
 	c = merge(a, b)
@@ -327,6 +330,10 @@ func TestList_internal_merge(t *testing.T) {
 	expectSequence(t, c.Begin(), c.End())
 
 	a, b = createLists([]int{1, 2, 3}, []int{4, 5, 6})
+	c = merge(a, b)
+	expectSequence(t, c.Begin(), c.End())
+
+	a, b = createLists([]int{1, 2, 8, 9}, []int{3, 4, 5, 6, 7})
 	c = merge(a, b)
 	expectSequence(t, c.Begin(), c.End())
 }

@@ -193,34 +193,34 @@ func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
 }
 
 /** merge two sorted lists, [first2, last2) into [first1, last1) */
-func mergeX[T cmp.Ordered](
-	first1 *ListNode[T], last1 *ListNode[T],
-	first2 *ListNode[T], last2 *ListNode[T],
-) (*ListNode[T], *ListNode[T]) {
-	newEnd := last1
-	newBegin := first1 // TODO: subopt
-	if first2.value < first1.value {
-		newBegin = first2
-	}
-
-	for first1 != last1 && first2 != last2 {
-		if first2.value < first1.value {
-			next := first2.next
-			splice(first1, first2, next)
-			first2 = next
-		} else {
-			first1 = first1.next
-		}
-		newEnd = first1
-	}
-
-	if first2 != last2 {
-		splice(last1, first2, last2)
-		newEnd = last1
-	}
-
-	return newBegin, newEnd
-}
+// func mergeX[T cmp.Ordered](
+// 	first1 *ListNode[T], last1 *ListNode[T],
+// 	first2 *ListNode[T], last2 *ListNode[T],
+// ) (*ListNode[T], *ListNode[T]) {
+// 	newEnd := last1
+// 	newBegin := first1 // TODO: subopt
+// 	if first2.value < first1.value {
+// 		newBegin = first2
+// 	}
+//
+// 	for first1 != last1 && first2 != last2 {
+// 		if first2.value < first1.value {
+// 			next := first2.next
+// 			splice(first1, first2, next)
+// 			first2 = next
+// 		} else {
+// 			first1 = first1.next
+// 		}
+// 		newEnd = first1
+// 	}
+//
+// 	if first2 != last2 {
+// 		splice(last1, first2, last2)
+// 		newEnd = last1
+// 	}
+//
+// 	return newBegin, newEnd
+// }
 
 // Merge sorted list b into sorted list a and return a
 func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
@@ -232,6 +232,12 @@ func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
 	for first1 != last1 && first2 != last2 {
 		if first2.value < first1.value {
 			next := first2.next
+			for next != last2 {
+				if !(next.value < first1.value) {
+					break
+				}
+				next = next.next
+			}
 			splice(first1, first2, next)
 			first2 = next
 		} else {
@@ -248,16 +254,16 @@ func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
 	return a
 }
 
-func sort[T cmp.Ordered](first *ListNode[T], size int) (*ListNode[T], *ListNode[T]) {
-	if size < 2 {
-		return first, first.next
-	}
-	// hsize := size / 2
-	// lbegin, lend := sort(first, hsize)        // TODO: wrong
-	// rbegin, rend := sort(lend, size-hsize)    // TODO: wrong
-	// return mergeX(lbegin, lend, rbegin, rend) // TODO: wrong
-	return nil, nil // TODO: wrong
-}
+// func sort[T cmp.Ordered](first *ListNode[T], size int) (*ListNode[T], *ListNode[T]) {
+// 	if size < 2 {
+// 		return first, first.next
+// 	}
+// 	// hsize := size / 2
+// 	// lbegin, lend := sort(first, hsize)        // TODO: wrong
+// 	// rbegin, rend := sort(lend, size-hsize)    // TODO: wrong
+// 	// return mergeX(lbegin, lend, rbegin, rend) // TODO: wrong
+// 	return nil, nil // TODO: wrong
+// }
 
 // TODO: iterations
 // foreach

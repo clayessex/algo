@@ -1,29 +1,24 @@
 package vessels
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/clayessex/godev/expected"
 )
 
-func expect(t *testing.T, actual interface{}, expected interface{}) {
+func expect[T any](t *testing.T, actual T, want T) {
 	t.Helper()
-	if !reflect.DeepEqual(expected, actual) {
-		t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", t.Name(), expected, actual)
-	}
+	expected.Expect(t, actual, want)
 }
 
-func expectNot(t *testing.T, actual interface{}, expected interface{}) {
+func expectNot(t *testing.T, actual interface{}, want interface{}) {
 	t.Helper()
-	if reflect.DeepEqual(expected, actual) {
-		t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", t.Name(), expected, actual)
-	}
+	expected.ExpectNot(t, actual, want)
 }
 
 func expectNil(t *testing.T, actual interface{}) {
 	t.Helper()
-	if !reflect.ValueOf(actual).IsNil() {
-		t.Fatalf("%s failed: expected %v to be nil", t.Name(), actual)
-	}
+	expected.ExpectNil(t, actual)
 }
 
 // List specific

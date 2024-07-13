@@ -51,7 +51,7 @@ func (n *ListNode[T]) remove() *ListNode[T] {
 }
 
 /** Moves [first, last) before pos */
-func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
+func splice[T any](pos, first, last *ListNode[T]) {
 	oleft := first.prev
 	oright := last
 	last = last.prev

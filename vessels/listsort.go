@@ -17,9 +17,7 @@ func SortList[T cmp.Ordered](list *List[T]) {
  * list2 is merged into list1
  * returns the new first (last is also the new last)
  */
-func mergeOrderedNodes[T cmp.Ordered](
-	first *ListNode[T], mid *ListNode[T], last *ListNode[T],
-) *ListNode[T] {
+func mergeOrderedNodes[T cmp.Ordered](first, mid, last *ListNode[T]) *ListNode[T] {
 	// determine which node will be the new first
 	newFirst := first
 	if mid.value < first.value {

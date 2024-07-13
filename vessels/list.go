@@ -176,47 +176,6 @@ func (list *List[T]) Reverse() {
 	}
 }
 
-func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
-	oleft := first.prev
-	oright := last
-	last = last.prev
-	left := pos.prev
-	right := pos
-
-	// cut from old
-	oleft.next = oright
-	oright.prev = oleft
-
-	// splice to new
-	left.next = first
-	first.prev = left
-	right.prev = last
-	last.next = right
-}
-
-/** merge two sorted lists, [first2, last2) into [first1, last1)
- *  return last1 (always last of the merged lists) */
-func mergeNodes[T cmp.Ordered](
-	first1 *ListNode[T], last1 *ListNode[T],
-	first2 *ListNode[T], last2 *ListNode[T],
-) *ListNode[T] {
-	for first1 != last1 && first2 != last2 {
-		if first2.value < first1.value {
-			next := first2.next
-			splice(first1, first2, next)
-			first2 = next
-		} else {
-			first1 = first1.next
-		}
-	}
-
-	if first2 != last2 {
-		splice(last1, first2, last2)
-	}
-
-	return last1
-}
-
 // Merge sorted list b into sorted list a and return a
 func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
 	first1 := a.Begin()
@@ -249,25 +208,84 @@ func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
 	return a
 }
 
-// TODO: not working
-// return first + size
-func sortNodes[T cmp.Ordered](first *ListNode[T], size int) *ListNode[T] {
+func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
+	oleft := first.prev
+	oright := last
+	last = last.prev
+	left := pos.prev
+	right := pos
+
+	// cut from old
+	oleft.next = oright
+	oright.prev = oleft
+
+	// splice to new
+	left.next = first
+	first.prev = left
+	right.prev = last
+	last.next = right
+}
+
+/** merge two sorted lists of nodes separated by a pivot (mid)
+ * list1 is [first, mid)
+ * list2 is [mid, last)
+ * list2 is merged into list1
+ * returns the new first (last remains the same)
+ */
+func mergeNodes[T cmp.Ordered](
+	first *ListNode[T], mid *ListNode[T], last *ListNode[T],
+) *ListNode[T] {
+	// determine which node will be the new first
+	newFirst := first
+	if mid.value < first.value {
+		newFirst = mid
+	}
+
+	// Step across the already ordered elements of list1 while inserting any runs
+	// of list2 where they belong.
+	for first != mid && mid != last {
+		if mid.value < first.value {
+			// determine the list2 run of values and splice them in
+			run := mid
+			next := run.next
+			for next != last {
+				if !(next.value < first.value) {
+					break
+				}
+				next = next.next
+			}
+			splice(first, run, next)
+			mid = next
+		} else {
+			// advance the insertion point across list1
+			first = first.next
+		}
+	}
+
+	return newFirst
+}
+
+// return (newFirst, newLast]
+func sortNodes[T cmp.Ordered](first *ListNode[T], size int) (*ListNode[T], *ListNode[T]) {
 	switch size {
 	case 0:
-		return first
+		return first, first
 	case 1:
-		return first.next
+		return first, first.next
 	default:
 		break
 	}
 
-	last1 := sortNodes(first, size/2)
-	last2 := sortNodes(last1, size-(size/2))
-	return mergeNodes(first, last1, last1, last2)
+	newFirst, mid := sortNodes(first, size/2)
+	mid, newLast := sortNodes(mid, size-(size/2))
+	newFirst = mergeNodes(newFirst, mid, newLast)
+	return newFirst, newLast
 }
 
 func SortList[T cmp.Ordered](list *List[T]) {
-	sortNodes(list.Begin(), list.Len())
+	if list.Len() > 0 {
+		sortNodes(list.Begin(), list.Len())
+	}
 }
 
 // TODO: iterations

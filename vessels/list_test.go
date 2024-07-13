@@ -340,12 +340,82 @@ func TestList_internal_merge(t *testing.T) {
 	expectSequence(t, c.Begin(), c.End())
 }
 
-func TestListSortList(t *testing.T) {
-	list := NewList[int]()
-	list.Append(6, 2, 4, 7, 8, 9, 1, 3, 5)
-	SortList(list)
-	for i := 0; i < list.Len(); i++ {
-		t.Logf("%v\n", list.At(i))
+func advance(n *ListNode[int], sz int) *ListNode[int] {
+	for i := 0; i < sz; i++ {
+		n = n.next
 	}
-	expectSequence(t, list.Begin(), list.End())
+	return n
+}
+
+func TestList_internal_mergeNodes(t *testing.T) {
+	tests := []struct {
+		name        string
+		input, want []int
+	}{
+		{"a", []int{4, 7, 8, 5, 6, 9}, []int{4, 5, 6, 7, 8, 9}},
+		{"b", []int{7, 8, 9, 4, 5, 6}, []int{4, 5, 6, 7, 8, 9}},
+		{"c", []int{4, 5, 6, 7, 8, 9}, []int{4, 5, 6, 7, 8, 9}},
+		{"d", []int{4, 8, 9, 5, 6, 7}, []int{4, 5, 6, 7, 8, 9}},
+		{"e", []int{2, 4, 9, 1, 5, 7}, []int{1, 2, 4, 5, 7, 9}},
+		{"f", []int{7, 8, 9, 1, 2, 3}, []int{1, 2, 3, 7, 8, 9}},
+	}
+
+	for _, v := range tests {
+		t.Run(v.name, func(t *testing.T) {
+			list := NewList[int]()
+			list.Append(v.input...)
+
+			mid := advance(list.Begin(), list.Len()/2)
+			end := mergeNodes(list.Begin(), mid, list.End())
+
+			expect(t, end, list.Begin())
+			compareNodesSlice(t, list.Begin(), list.End(), v.want)
+		})
+	}
+}
+
+func TestList_internal_mergeNodesPartail(t *testing.T) {
+	input, want := []int{4, 7, 3, 6, 9, 8}, []int{3, 4, 6, 7, 9, 8}
+
+	list := NewList[int]()
+	list.Append(input...)
+
+	mid := advance(list.Begin(), 2)
+	last := advance(mid, 2)
+
+	// merge first two pairs
+	_ = mergeNodes(list.Begin(), mid, last)
+
+	logListNodes(t, list.Begin(), list.End())
+	compareNodesSlice(t, list.Begin(), list.End(), want)
+}
+
+func TestList_internal_sortNodesEmpty(t *testing.T) {
+	list := NewList[int]()
+	begin, end := sortNodes(list.End(), 0)
+	expect(t, begin, list.End())
+	expect(t, end, list.End())
+}
+
+func TestListSortList(t *testing.T) {
+	tests := []struct {
+		name string
+		data []int
+	}{
+		{"a", []int{9, 8, 7, 6, 5, 4, 3, 2, 1}},
+		{"b", []int{1, 2, 3, 4, 5, 6, 7, 8, 9}},
+		{"c", []int{8, 2, 6, 5, 1, 4, 3, 9, 7, 0}},
+		{"d", []int{}},
+		{"e", []int{8}},
+		{"f", []int{9, 8}},
+	}
+
+	for _, v := range tests {
+		t.Run(v.name, func(t *testing.T) {
+			list := NewList[int]()
+			list.Append(v.data...)
+			SortList(list)
+			expectOrdered(t, list.Begin(), list.End())
+		})
+	}
 }

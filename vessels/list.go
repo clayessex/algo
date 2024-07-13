@@ -53,10 +53,12 @@ func (n *ListNode[T]) remove() *ListNode[T] {
 }
 
 func (n *ListNode[T]) Swap(o *ListNode[T]) {
-	n.value, o.value = o.value, n.value
-	// tmp := o.next
-	// o.remove().insertBefore(n)
-	// n.remove().insertBefore(tmp)
+	// n.value, o.value = o.value, n.value
+	tmp := o.next
+	o.remove().insertBefore(n)
+	if tmp != n {
+		n.remove().insertBefore(tmp)
+	}
 }
 
 type List[T any] struct {

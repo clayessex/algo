@@ -66,19 +66,26 @@ func TestListNode_internal_remove(t *testing.T) {
 	expect(t, b.prev, a)
 }
 
-func TestListNode_internal_Swap(t *testing.T) {
-	a := NewListNode(3)
-	b := NewListNode(9)
-	b.insertAfter(a)
-	expect(t, a.next, b)
-	expect(t, b.prev, a)
-	expect(t, a.value, 3)
-	expect(t, b.value, 9)
-	a.Swap(b)
-	expect(t, a.value, 9)
-	expect(t, b.value, 3)
-	expect(t, b.next, a)
-	expect(t, a.prev, b)
+func TestListNode_Swap(t *testing.T) {
+	list := NewList[int]()
+	list.Append(3, 9, 7)
+	mid := list.Begin().Next()
+
+	expect(t, list.Begin().Next(), mid)
+	expect(t, list.End().Prev().Prev(), mid)
+
+	expect(t, list.Begin().value, 3)
+	expect(t, list.End().Prev().value, 7)
+
+	list.Begin().Swap(list.End().Prev())
+
+	// ensure that the values swapped
+	expect(t, list.Begin().value, 7)
+	expect(t, list.End().Prev().value, 3)
+
+	// ensure that the node positions swapped
+	expect(t, list.Begin().Next(), mid)
+	expect(t, list.End().Prev().Prev(), mid)
 }
 
 func TestListLen(t *testing.T) {

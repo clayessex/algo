@@ -54,6 +54,9 @@ func (n *ListNode[T]) remove() *ListNode[T] {
 
 func (n *ListNode[T]) Swap(o *ListNode[T]) {
 	n.value, o.value = o.value, n.value
+	// tmp := o.next
+	// o.remove().insertBefore(n)
+	// n.remove().insertBefore(tmp)
 }
 
 type List[T any] struct {
@@ -107,7 +110,7 @@ func (list *List[T]) insert(v T, pos *ListNode[T]) *ListNode[T] {
 	return n.insertBefore(pos)
 }
 
-func (list *List[T]) remove(pos *ListNode[T]) *ListNode[T] {
+func (list *List[T]) Remove(pos *ListNode[T]) *ListNode[T] {
 	list.len--
 	return pos.remove()
 }
@@ -132,14 +135,14 @@ func (list *List[T]) PopBack() T {
 	if list.len == 0 {
 		panic("list PopBack() called on empty list")
 	}
-	return list.remove(list.head.prev).value
+	return list.Remove(list.head.prev).value
 }
 
 func (list *List[T]) PopFront() T {
 	if list.len == 0 {
 		panic("list PopFront() called on empty list")
 	}
-	return list.remove(list.head.next).value
+	return list.Remove(list.head.next).value
 }
 
 func (list *List[T]) Append(v ...T) {
@@ -176,38 +179,9 @@ func (list *List[T]) Reverse() {
 	}
 }
 
-// Merge sorted list b into sorted list a and return a
-func merge[T cmp.Ordered](a *List[T], b *List[T]) *List[T] {
-	first1 := a.Begin()
-	last1 := a.End()
-	first2 := b.Begin()
-	last2 := b.End()
-
-	for first1 != last1 && first2 != last2 {
-		if first2.value < first1.value {
-			next := first2.next
-			for next != last2 {
-				if !(next.value < first1.value) {
-					break
-				}
-				next = next.next
-			}
-			splice(first1, first2, next)
-			first2 = next
-		} else {
-			first1 = first1.next
-		}
-	}
-
-	if first2 != last2 {
-		splice(last1, first2, last2)
-	}
-
-	a.len += b.len
-	b.len = 0
-	return a
-}
-
+/**
+ * Moves [first, last) before pos
+ */
 func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
 	oleft := first.prev
 	oright := last
@@ -226,11 +200,11 @@ func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
 	last.next = right
 }
 
-/** merge two sorted lists of nodes separated by a pivot (mid)
+/** Merge two sorted lists of nodes separated by a pivot (mid)
  * list1 is [first, mid)
  * list2 is [mid, last)
  * list2 is merged into list1
- * returns the new first (last remains the same)
+ * returns the new first (last is also the new last)
  */
 func mergeNodes[T cmp.Ordered](
 	first *ListNode[T], mid *ListNode[T], last *ListNode[T],
@@ -265,7 +239,11 @@ func mergeNodes[T cmp.Ordered](
 	return newFirst
 }
 
-// return (newFirst, newLast]
+/**
+* Simple recursive merge sort. Avoids walking the list by recursing by half
+* down to single nodes and merging them back up.
+* Returns: (newFirst, newLast]
+ */
 func sortNodes[T cmp.Ordered](first *ListNode[T], size int) (*ListNode[T], *ListNode[T]) {
 	switch size {
 	case 0:
@@ -282,6 +260,9 @@ func sortNodes[T cmp.Ordered](first *ListNode[T], size int) (*ListNode[T], *List
 	return newFirst, newLast
 }
 
+/**
+* Sort the list
+ */
 func SortList[T cmp.Ordered](list *List[T]) {
 	if list.Len() > 0 {
 		sortNodes(list.Begin(), list.Len())

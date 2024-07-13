@@ -77,8 +77,8 @@ func TestListNode_internal_Swap(t *testing.T) {
 	a.Swap(b)
 	expect(t, a.value, 9)
 	expect(t, b.value, 3)
-	expect(t, a.next, b)
-	expect(t, b.prev, a)
+	expect(t, b.next, a)
+	expect(t, a.prev, b)
 }
 
 func TestListLen(t *testing.T) {
@@ -303,43 +303,6 @@ func TestList_internal_splice(t *testing.T) {
 	expect(t, a.At(3), 4)
 	expect(t, a.At(4), 8)
 	expect(t, a.At(5), 7)
-}
-
-func createLists(a []int, b []int) (*List[int], *List[int]) {
-	first := NewList[int]()
-	second := NewList[int]()
-	for _, v := range a {
-		first.PushBack(v)
-	}
-	for _, v := range b {
-		second.PushBack(v)
-	}
-	return first, second
-}
-
-func TestList_internal_merge(t *testing.T) {
-	a, b := createLists([]int{5, 7, 9}, []int{4, 6, 8})
-	c := merge(a, b)
-	expectSequence(t, c.Begin(), c.End())
-	expect(t, a, c)
-	expect(t, b.Len(), 0)
-	expect(t, a.Len(), 6)
-
-	a, b = createLists([]int{5, 6, 9}, []int{7, 8, 10})
-	c = merge(a, b)
-	expectSequence(t, c.Begin(), c.End())
-
-	a, b = createLists([]int{4, 5, 6}, []int{1, 2, 3})
-	c = merge(a, b)
-	expectSequence(t, c.Begin(), c.End())
-
-	a, b = createLists([]int{1, 2, 3}, []int{4, 5, 6})
-	c = merge(a, b)
-	expectSequence(t, c.Begin(), c.End())
-
-	a, b = createLists([]int{1, 2, 8, 9}, []int{3, 4, 5, 6, 7})
-	c = merge(a, b)
-	expectSequence(t, c.Begin(), c.End())
 }
 
 func advance(n *ListNode[int], sz int) *ListNode[int] {

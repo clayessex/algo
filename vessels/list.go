@@ -53,7 +53,6 @@ func (n *ListNode[T]) remove() *ListNode[T] {
 }
 
 func (n *ListNode[T]) Swap(o *ListNode[T]) {
-	// n.value, o.value = o.value, n.value
 	tmp := o.next
 	o.remove().insertBefore(n)
 	if tmp != n {
@@ -208,7 +207,7 @@ func splice[T any](pos *ListNode[T], first *ListNode[T], last *ListNode[T]) {
  * list2 is merged into list1
  * returns the new first (last is also the new last)
  */
-func mergeNodes[T cmp.Ordered](
+func mergeOrderedNodes[T cmp.Ordered](
 	first *ListNode[T], mid *ListNode[T], last *ListNode[T],
 ) *ListNode[T] {
 	// determine which node will be the new first
@@ -258,7 +257,7 @@ func sortNodes[T cmp.Ordered](first *ListNode[T], size int) (*ListNode[T], *List
 
 	newFirst, mid := sortNodes(first, size/2)
 	mid, newLast := sortNodes(mid, size-(size/2))
-	newFirst = mergeNodes(newFirst, mid, newLast)
+	newFirst = mergeOrderedNodes(newFirst, mid, newLast)
 	return newFirst, newLast
 }
 

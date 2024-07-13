@@ -338,7 +338,7 @@ func TestList_internal_mergeNodes(t *testing.T) {
 			list.Append(v.input...)
 
 			mid := advance(list.Begin(), list.Len()/2)
-			end := mergeNodes(list.Begin(), mid, list.End())
+			end := mergeOrderedNodes(list.Begin(), mid, list.End())
 
 			expect(t, end, list.Begin())
 			compareNodesSlice(t, list.Begin(), list.End(), v.want)
@@ -356,7 +356,7 @@ func TestList_internal_mergeNodesPartail(t *testing.T) {
 	last := advance(mid, 2)
 
 	// merge first two pairs
-	_ = mergeNodes(list.Begin(), mid, last)
+	_ = mergeOrderedNodes(list.Begin(), mid, last)
 
 	logListNodes(t, list.Begin(), list.End())
 	compareNodesSlice(t, list.Begin(), list.End(), want)

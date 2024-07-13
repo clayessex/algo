@@ -31,7 +31,7 @@ func TestList_internal_mergeNodes(t *testing.T) {
 			list.Append(v.input...)
 
 			mid := advance(list.Begin(), list.Len()/2)
-			end := mergeOrderedNodes(list.Begin(), mid, list.End())
+			end := mergeOrderedNodes(list.Begin(), mid, list.End(), cmp.Less)
 
 			expect(t, end, list.Begin())
 			compareNodesSlice(t, list.Begin(), list.End(), v.want)
@@ -49,7 +49,7 @@ func TestList_internal_mergeNodesPartail(t *testing.T) {
 	last := advance(mid, 2)
 
 	// merge first two pairs
-	_ = mergeOrderedNodes(list.Begin(), mid, last)
+	_ = mergeOrderedNodes(list.Begin(), mid, last, cmp.Less)
 
 	logListNodes(t, list.Begin(), list.End())
 	compareNodesSlice(t, list.Begin(), list.End(), want)
@@ -57,7 +57,7 @@ func TestList_internal_mergeNodesPartail(t *testing.T) {
 
 func TestList_internal_sortNodesEmpty(t *testing.T) {
 	list := NewList[int]()
-	begin, end := sortNodes(list.End(), 0)
+	begin, end := sortNodes(list.End(), 0, cmp.Less)
 	expect(t, begin, list.End())
 	expect(t, end, list.End())
 }
@@ -85,7 +85,32 @@ func TestListSortList(t *testing.T) {
 	}
 }
 
-func isOrdered[T cmp.Ordered](first *ListNode[T], last *ListNode[T]) bool {
+func TestListSortListFunc(t *testing.T) {
+	list := NewList[int]()
+	list.Append([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}...)
+	SortListFunc(list, func(a, b int) bool {
+		return b < a
+	})
+	if !isReverseOrdered(list.Begin(), list.End()) {
+		t.Fatal("list is not reverse ordered")
+	}
+}
+
+func isReverseOrdered[T cmp.Ordered](first, last *ListNode[T]) bool {
+	if first == last {
+		return true
+	}
+	first = first.next
+	for first != last {
+		if !(first.prev.value > first.value) {
+			return false
+		}
+		first = first.next
+	}
+	return true
+}
+
+func isOrdered[T cmp.Ordered](first, last *ListNode[T]) bool {
 	if first == last {
 		return true
 	}

@@ -96,6 +96,15 @@ func TestListSortListFunc(t *testing.T) {
 	}
 }
 
+func TestListSortListStrings(t *testing.T) {
+	list := NewList[string]()
+	list.Append([]string{"banana", "apple", "foo", "bar", "pear", "strawberry"}...)
+	SortList(list)
+	if !isOrdered(list.Begin(), list.End()) {
+		t.Fatal("string list is not ordered")
+	}
+}
+
 func isReverseOrdered[T cmp.Ordered](first, last *ListNode[T]) bool {
 	if first == last {
 		return true

@@ -3,7 +3,7 @@ package vessels
 import "cmp"
 
 /**
- * Sort the list
+ * Sort the list according to cmp.Less
  */
 func SortList[T cmp.Ordered](list *List[T]) {
 	if list.Len() > 0 {

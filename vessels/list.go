@@ -253,6 +253,34 @@ func ListRemove[T comparable](list *List[T], value T) int {
 	})
 }
 
+func ListUniqueFunc[T any](list *List[T], pred func(a, b T) bool) int {
+	if list.Len() <= 1 {
+		return 0
+	}
+
+	count := 0
+	first := list.Begin().Next()
+	for first != list.End() {
+		if pred(first.Prev().value, first.value) {
+			tmp := first
+			first = first.Next()
+			tmp.remove()
+			list.len--
+			count++
+		} else {
+			first = first.Next()
+		}
+	}
+
+	return count
+}
+
+func ListUnique[T comparable](list *List[T]) int {
+	return ListUniqueFunc(list, func(a, b T) bool {
+		return a == b
+	})
+}
+
 // TODO: iterations
 // foreach
 // find

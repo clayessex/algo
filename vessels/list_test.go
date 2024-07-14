@@ -343,3 +343,14 @@ func TestListRemove(t *testing.T) {
 	expect(t, list.At(1), 6)
 	expect(t, count, 1)
 }
+
+func TestListUnique(t *testing.T) {
+	list := NewList[int]()
+	count := ListUnique(list)
+	expect(t, count, 0)
+	list.Append(4, 4, 5, 6, 6, 7)
+	count = ListUnique(list)
+	expect(t, count, 2)
+	expect(t, list.Len(), 4)
+	expect(t, list.Values(), []int{4, 5, 6, 7})
+}

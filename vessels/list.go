@@ -283,7 +283,7 @@ func ListUnique[T comparable](list *List[T]) int {
 	})
 }
 
-func ListMerge[T cmp.Ordered](list, other *List[T]) {
+func ListMergeFunc[T any](list, other *List[T], comp func(a, b T) bool) {
 	if list == other || other.Len() == 0 {
 		return
 	}
@@ -294,10 +294,10 @@ func ListMerge[T cmp.Ordered](list, other *List[T]) {
 	last2 := other.End()
 
 	for first1 != last1 && first2 != last2 {
-		if first2.value < first1.value {
+		if comp(first2.value, first1.value) {
 			next := first2.next
 			for next != last2 {
-				if !(next.value < first1.value) {
+				if !comp(next.value, first1.value) {
 					break
 				}
 				next = next.next
@@ -314,6 +314,10 @@ func ListMerge[T cmp.Ordered](list, other *List[T]) {
 	}
 	list.len += other.len
 	other.len = 0
+}
+
+func ListMerge[T cmp.Ordered](list, other *List[T]) {
+	ListMergeFunc(list, other, cmp.Less)
 }
 
 // TODO: iterations

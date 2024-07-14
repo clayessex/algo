@@ -216,11 +216,21 @@ func (list *List[T]) Reverse() {
 	if list.Len() <= 1 {
 		return
 	}
-	p := list.End()
-	for i := 0; i < list.len-1; i++ {
-		splice(p, list.Begin(), list.Begin().next)
-		p = p.prev
+
+	front := list.head.next
+	back := list.head.prev
+
+	for i := 0; i < list.Len()/2; i++ {
+		a, b := front, back
+		front, back = front.next, back.prev
+		a.Swap(b)
 	}
+
+	// p := list.End()
+	// for i := 0; i < list.len-1; i++ {
+	// 	splice(p, list.Begin(), list.Begin().next)
+	// 	p = p.prev
+	// }
 }
 
 func (list *List[T]) Splice(pos, first, last *ListNode[T]) {

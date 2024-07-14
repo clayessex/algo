@@ -237,10 +237,6 @@ func ListRemove[T comparable](list *List[T], v T) {
 	})
 }
 
-// func Remove[T any](list *List[T}, v T) {
-//
-// }
-
 // TODO: iterations
 // foreach
 // find

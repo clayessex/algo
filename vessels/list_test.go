@@ -240,8 +240,10 @@ func TestListAppend(t *testing.T) {
 
 func TestListValues(t *testing.T) {
 	list := NewList[int]()
-	list.Append(9, 8, 7, 6, 1)
 	sl := list.Values()
+	expect(t, len(sl), 0)
+	list.Append(9, 8, 7, 6, 1)
+	sl = list.Values()
 	expect(t, sl, []int{9, 8, 7, 6, 1})
 }
 
@@ -324,5 +326,10 @@ func TestListSplice(t *testing.T) {
 }
 
 func TestListRemove(t *testing.T) {
-	// t.Fatal("WIP")
+	list := NewList[int]()
+	ListRemove(list, 99)
+	list.Append(4, 5, 6)
+	ListRemove(list, 5)
+	expect(t, list.At(0), 4)
+	expect(t, list.At(1), 6)
 }

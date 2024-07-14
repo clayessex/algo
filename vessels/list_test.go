@@ -59,7 +59,7 @@ func TestListNode_internal_remove(t *testing.T) {
 	b := NewListNode(9)
 	a.insertBefore(n)
 	b.insertAfter(n)
-	expect(t, n.remove().value, 8)
+	n.remove()
 	expect(t, a.next, b)
 	expect(t, b.prev, a)
 }
@@ -279,6 +279,7 @@ func TestListReverse(t *testing.T) {
 	l.PushBack(7)
 	l.PushBack(6)
 	l.PushBack(5)
+	expect(t, l.Len(), 5)
 	expect(t, l.At(0), 9)
 	expect(t, l.At(1), 8)
 	expect(t, l.At(2), 7)
@@ -294,6 +295,10 @@ func TestListReverse(t *testing.T) {
 	l.PushBack(1)
 	l.Reverse()
 	expect(t, l.At(0), 1)
+	l.PushBack(2)
+	l.Reverse()
+	expect(t, l.At(0), 2)
+	expect(t, l.At(1), 1)
 }
 
 func TestList_internal_splice(t *testing.T) {
@@ -317,6 +322,10 @@ func TestList_internal_splice(t *testing.T) {
 	expect(t, a.At(3), 4)
 	expect(t, a.At(4), 8)
 	expect(t, a.At(5), 7)
+
+	splice(a.Begin(), a.Begin(), a.Begin().Next())
+	expect(t, a.Len(), 6)
+	expect(t, len(a.Values()), 6)
 }
 
 func TestListSplice(t *testing.T) {

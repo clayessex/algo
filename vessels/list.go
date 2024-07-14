@@ -42,16 +42,18 @@ func (n *ListNode[T]) insertAfter(p *ListNode[T]) *ListNode[T] {
 	return n
 }
 
-func (n *ListNode[T]) remove() *ListNode[T] {
+func (n *ListNode[T]) remove() {
 	n.prev.next = n.next
 	n.next.prev = n.prev
-	n.prev = n
-	n.next = n
-	return n
+	n.prev = nil
+	n.next = nil
 }
 
 /** Moves [first, last) before pos */
 func splice[T any](pos, first, last *ListNode[T]) {
+	if pos == first || pos == last {
+		return
+	}
 	oleft := first.prev
 	oright := last
 	last = last.prev
@@ -71,9 +73,9 @@ func splice[T any](pos, first, last *ListNode[T]) {
 
 func (n *ListNode[T]) Swap(o *ListNode[T]) {
 	tmp := o.next
-	o.remove().insertBefore(n)
+	splice(n, o, o.next)
 	if tmp != n {
-		n.remove().insertBefore(tmp)
+		splice(tmp, n, n.next)
 	}
 }
 
@@ -128,9 +130,9 @@ func (list *List[T]) insert(v T, pos *ListNode[T]) *ListNode[T] {
 	return n.insertBefore(pos)
 }
 
-func (list *List[T]) RemoveNode(pos *ListNode[T]) *ListNode[T] {
+func (list *List[T]) RemoveNode(pos *ListNode[T]) {
 	list.len--
-	return pos.remove()
+	pos.remove()
 }
 
 func (list *List[T]) InsertBefore(v T, pos *ListNode[T]) *ListNode[T] {
@@ -153,14 +155,19 @@ func (list *List[T]) PopBack() T {
 	if list.len == 0 {
 		panic("list PopBack() called on empty list")
 	}
-	return list.RemoveNode(list.head.prev).value
+	p := list.End().prev
+	value := p.value
+	list.RemoveNode(p)
+	return value
 }
 
 func (list *List[T]) PopFront() T {
 	if list.len == 0 {
 		panic("list PopFront() called on empty list")
 	}
-	return list.RemoveNode(list.head.next).value
+	value := list.Begin().value
+	list.RemoveNode(list.Begin())
+	return value
 }
 
 func (list *List[T]) Append(v ...T) {
@@ -204,9 +211,13 @@ func (list *List[T]) At(index int) T {
 }
 
 func (list *List[T]) Reverse() {
+	if list.Len() <= 1 {
+		return
+	}
 	p := list.End()
-	for i := 0; i < list.len; i++ {
-		p = list.Begin().remove().insertBefore(p)
+	for i := 0; i < list.len-1; i++ {
+		splice(p, list.Begin(), list.Begin().next)
+		p = p.prev
 	}
 }
 
@@ -225,6 +236,7 @@ func ListRemoveFunc[T any](list *List[T], v T, comp func(a, b T) bool) {
 			tmp := p
 			p = p.Next()
 			tmp.remove()
+			list.len--
 		} else {
 			p = p.Next()
 		}

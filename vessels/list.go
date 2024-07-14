@@ -128,7 +128,7 @@ func (list *List[T]) insert(v T, pos *ListNode[T]) *ListNode[T] {
 	return n.insertBefore(pos)
 }
 
-func (list *List[T]) Remove(pos *ListNode[T]) *ListNode[T] {
+func (list *List[T]) RemoveNode(pos *ListNode[T]) *ListNode[T] {
 	list.len--
 	return pos.remove()
 }
@@ -153,20 +153,33 @@ func (list *List[T]) PopBack() T {
 	if list.len == 0 {
 		panic("list PopBack() called on empty list")
 	}
-	return list.Remove(list.head.prev).value
+	return list.RemoveNode(list.head.prev).value
 }
 
 func (list *List[T]) PopFront() T {
 	if list.len == 0 {
 		panic("list PopFront() called on empty list")
 	}
-	return list.Remove(list.head.next).value
+	return list.RemoveNode(list.head.next).value
 }
 
 func (list *List[T]) Append(v ...T) {
 	for _, el := range v {
 		list.PushBack(el)
 	}
+}
+
+func (list *List[T]) Values() []T {
+	result := make([]T, 0, list.Len())
+	if list.Len() == 0 {
+		return result
+	}
+	first := list.Begin()
+	for first != list.End() {
+		result = append(result, first.value)
+		first = first.Next()
+	}
+	return result
 }
 
 func (list *List[T]) Clear() {
@@ -196,6 +209,37 @@ func (list *List[T]) Reverse() {
 		p = list.Begin().remove().insertBefore(p)
 	}
 }
+
+func (list *List[T]) Splice(pos, first, last *ListNode[T]) {
+	splice(pos, first, last)
+}
+
+func ListRemoveFunc[T any](list *List[T], v T, comp func(a, b T) bool) {
+	if list.Len() == 0 {
+		return
+	}
+
+	p := list.Begin()
+	for p != list.End() {
+		if comp(p.value, v) {
+			tmp := p
+			p = p.Next()
+			tmp.remove()
+		} else {
+			p = p.Next()
+		}
+	}
+}
+
+func ListRemove[T comparable](list *List[T], v T) {
+	ListRemoveFunc(list, v, func(a, b T) bool {
+		return a == b
+	})
+}
+
+// func Remove[T any](list *List[T}, v T) {
+//
+// }
 
 // TODO: iterations
 // foreach

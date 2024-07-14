@@ -238,6 +238,13 @@ func TestListAppend(t *testing.T) {
 	expect(t, l.At(3), 6)
 }
 
+func TestListValues(t *testing.T) {
+	list := NewList[int]()
+	list.Append(9, 8, 7, 6, 1)
+	sl := list.Values()
+	expect(t, sl, []int{9, 8, 7, 6, 1})
+}
+
 func TestListClear(t *testing.T) {
 	l := NewList[int]()
 	l.PushBack(9)
@@ -308,4 +315,14 @@ func TestList_internal_splice(t *testing.T) {
 	expect(t, a.At(3), 4)
 	expect(t, a.At(4), 8)
 	expect(t, a.At(5), 7)
+}
+
+func TestListSplice(t *testing.T) {
+	list := NewList[int]()
+	list.Append(1, 2, 3)
+	list.Splice(list.Begin(), list.Begin().Next(), list.End().Prev())
+}
+
+func TestListRemove(t *testing.T) {
+	// t.Fatal("WIP")
 }

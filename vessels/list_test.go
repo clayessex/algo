@@ -338,7 +338,8 @@ func TestListRemove(t *testing.T) {
 	list := NewList[int]()
 	ListRemove(list, 99)
 	list.Append(4, 5, 6)
-	ListRemove(list, 5)
+	count := ListRemove(list, 5)
 	expect(t, list.At(0), 4)
 	expect(t, list.At(1), 6)
+	expect(t, count, 1)
 }

@@ -225,11 +225,12 @@ func (list *List[T]) Splice(pos, first, last *ListNode[T]) {
 	splice(pos, first, last)
 }
 
-func ListRemoveFunc[T any](list *List[T], v T, comp func(a, b T) bool) {
+func ListRemoveFunc[T any](list *List[T], v T, comp func(a, b T) bool) int {
 	if list.Len() == 0 {
-		return
+		return 0
 	}
 
+	count := 0
 	p := list.Begin()
 	for p != list.End() {
 		if comp(p.value, v) {
@@ -237,14 +238,17 @@ func ListRemoveFunc[T any](list *List[T], v T, comp func(a, b T) bool) {
 			p = p.Next()
 			tmp.remove()
 			list.len--
+			count++
 		} else {
 			p = p.Next()
 		}
 	}
+
+	return count
 }
 
-func ListRemove[T comparable](list *List[T], v T) {
-	ListRemoveFunc(list, v, func(a, b T) bool {
+func ListRemove[T comparable](list *List[T], v T) int {
+	return ListRemoveFunc(list, v, func(a, b T) bool {
 		return a == b
 	})
 }

@@ -354,3 +354,38 @@ func TestListUnique(t *testing.T) {
 	expect(t, list.Len(), 4)
 	expect(t, list.Values(), []int{4, 5, 6, 7})
 }
+
+func TestListMerge(t *testing.T) {
+	a := NewList[int]()
+	b := NewList[int]()
+	a.Append(1, 4, 5, 7)
+	b.Append(2, 3, 6, 8)
+	ListMerge(a, b)
+	expect(t, a.Len(), 8)
+	expect(t, b.Len(), 0)
+	expect(t, a.Values(), []int{1, 2, 3, 4, 5, 6, 7, 8})
+
+	a.Clear()
+	b.Clear()
+	a.Append(1, 2, 3)
+	b.Append(6, 7, 8)
+	ListMerge(a, b)
+	expect(t, a.Len(), 6)
+	expect(t, a.Values(), []int{1, 2, 3, 6, 7, 8})
+
+	a.Clear()
+	b.Clear()
+	b.Append(6, 7, 8)
+	ListMerge(a, b)
+	expect(t, a.Len(), 3)
+	expect(t, b.Len(), 0)
+	expect(t, a.Values(), []int{6, 7, 8})
+
+	a.Clear()
+	b.Clear()
+	a.Append(6, 7, 8)
+	ListMerge(a, b)
+	expect(t, a.Len(), 3)
+	expect(t, b.Len(), 0)
+	expect(t, a.Values(), []int{6, 7, 8})
+}

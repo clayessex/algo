@@ -1,5 +1,7 @@
 package vessels
 
+import "cmp"
+
 type ListNode[T any] struct {
 	next  *ListNode[T]
 	prev  *ListNode[T]
@@ -279,6 +281,39 @@ func ListUnique[T comparable](list *List[T]) int {
 	return ListUniqueFunc(list, func(a, b T) bool {
 		return a == b
 	})
+}
+
+func ListMerge[T cmp.Ordered](list, other *List[T]) {
+	if list == other || other.Len() == 0 {
+		return
+	}
+
+	first1 := list.Begin()
+	last1 := list.End()
+	first2 := other.Begin()
+	last2 := other.End()
+
+	for first1 != last1 && first2 != last2 {
+		if first2.value < first1.value {
+			next := first2.next
+			for next != last2 {
+				if !(next.value < first1.value) {
+					break
+				}
+				next = next.next
+			}
+			splice(first1, first2, next)
+			first2 = next
+		} else {
+			first1 = first1.next
+		}
+	}
+
+	if first2 != last2 {
+		splice(last1, first2, last2)
+	}
+	list.len += other.len
+	other.len = 0
 }
 
 // TODO: iterations

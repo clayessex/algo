@@ -2,12 +2,19 @@ package vessels
 
 import "cmp"
 
+// List node holds a single value and pointers to the next and prev nodes
+// The list head is a node where:
+//
+//	next = first node in the list
+//	prev = last node in the list
+//	next = prev = head when the list is empty
 type ListNode[T any] struct {
 	next  *ListNode[T]
 	prev  *ListNode[T]
 	value T
 }
 
+// Create a new list node, optionally with a value
 func NewListNode[T any](v ...T) *ListNode[T] {
 	n := &ListNode[T]{}
 	n.next = n
@@ -18,15 +25,17 @@ func NewListNode[T any](v ...T) *ListNode[T] {
 	return n
 }
 
+// Pointer to the next node in the list
 func (n *ListNode[T]) Next() *ListNode[T] {
 	return n.next
 }
 
+// Pointer to the previous node in the list
 func (n *ListNode[T]) Prev() *ListNode[T] {
 	return n.prev
 }
 
-/** insert n before p */
+// insert n before p
 func (n *ListNode[T]) insertBefore(p *ListNode[T]) *ListNode[T] {
 	p.prev.next = n
 	n.prev = p.prev
@@ -35,7 +44,7 @@ func (n *ListNode[T]) insertBefore(p *ListNode[T]) *ListNode[T] {
 	return n
 }
 
-/** insert n after p */
+// insert n after p
 func (n *ListNode[T]) insertAfter(p *ListNode[T]) *ListNode[T] {
 	p.next.prev = n
 	n.next = p.next
@@ -44,6 +53,8 @@ func (n *ListNode[T]) insertAfter(p *ListNode[T]) *ListNode[T] {
 	return n
 }
 
+// remove n from the list
+// nil the pointers for GC (shouldn't be needed)
 func (n *ListNode[T]) remove() {
 	n.prev.next = n.next
 	n.next.prev = n.prev
@@ -51,7 +62,7 @@ func (n *ListNode[T]) remove() {
 	n.next = nil
 }
 
-/** Moves [first, last) before pos */
+// Moves [first, last) before pos
 func splice[T any](pos, first, last *ListNode[T]) {
 	if pos == first || pos == last {
 		return
@@ -73,6 +84,7 @@ func splice[T any](pos, first, last *ListNode[T]) {
 	last.next = right
 }
 
+// Swap the two nodes without touching their values
 func (n *ListNode[T]) Swap(o *ListNode[T]) {
 	tmp := o.next
 	splice(n, o, o.next)
@@ -81,37 +93,49 @@ func (n *ListNode[T]) Swap(o *ListNode[T]) {
 	}
 }
 
+// The list head is a node where:
+//
+//	next = first node in the list
+//	prev = last node in the list
+//	next = prev = head when the list is empty
 type List[T any] struct {
 	head *ListNode[T]
 	len  int
 }
 
+// Create a new list
 func NewList[T any]() *List[T] {
 	list := List[T]{}
 	list.head = NewListNode[T]()
 	return &list
 }
 
+// Length of the list
 func (list *List[T]) Len() int {
 	return list.len
 }
 
+// Swap two lists
 func (list *List[T]) Swap(o *List[T]) {
 	*list, *o = *o, *list
 }
 
+// Len() == 0
 func (list *List[T]) isEmpty() bool {
 	return list.len == 0
 }
 
+// First element of the list
 func (list *List[T]) Begin() *ListNode[T] {
 	return list.head.next
 }
 
+// Node following the last in the list
 func (list *List[T]) End() *ListNode[T] {
 	return list.head
 }
 
+// First value of the list
 func (list *List[T]) Front() T {
 	if list.len == 0 {
 		panic("list Front() called on empty list")
@@ -119,6 +143,7 @@ func (list *List[T]) Front() T {
 	return list.head.next.value
 }
 
+// Last value of the list
 func (list *List[T]) Back() T {
 	if list.len == 0 {
 		panic("list Back() called on empty list")
@@ -126,33 +151,40 @@ func (list *List[T]) Back() T {
 	return list.head.prev.value
 }
 
+// Insert the value into the list before node pos
 func (list *List[T]) insert(v T, pos *ListNode[T]) *ListNode[T] {
 	n := NewListNode(v)
 	list.len++
 	return n.insertBefore(pos)
 }
 
+// Remove the node from the list
 func (list *List[T]) RemoveNode(pos *ListNode[T]) {
 	list.len--
 	pos.remove()
 }
 
+// Insert the value into the list before pos
 func (list *List[T]) InsertBefore(v T, pos *ListNode[T]) *ListNode[T] {
 	return list.insert(v, pos)
 }
 
+// Insert the value into the list after pos
 func (list *List[T]) InsertAfter(v T, pos *ListNode[T]) *ListNode[T] {
 	return list.insert(v, pos.Next())
 }
 
+// Add a new value onto the end of the list
 func (list *List[T]) PushBack(v T) *ListNode[T] {
 	return list.insert(v, list.End())
 }
 
+// Add a new value onto the beginning of the list
 func (list *List[T]) PushFront(v T) *ListNode[T] {
 	return list.insert(v, list.Begin())
 }
 
+// Remove the last value from the list and return it
 func (list *List[T]) PopBack() T {
 	if list.len == 0 {
 		panic("list PopBack() called on empty list")
@@ -163,6 +195,7 @@ func (list *List[T]) PopBack() T {
 	return value
 }
 
+// Remove the first value from the list and return it
 func (list *List[T]) PopFront() T {
 	if list.len == 0 {
 		panic("list PopFront() called on empty list")
@@ -172,12 +205,14 @@ func (list *List[T]) PopFront() T {
 	return value
 }
 
+// Append one or more values to the list
 func (list *List[T]) Append(v ...T) {
 	for _, el := range v {
 		list.PushBack(el)
 	}
 }
 
+// Return a slice containing the list values
 func (list *List[T]) Values() []T {
 	result := make([]T, 0, list.Len())
 	if list.Len() == 0 {
@@ -191,6 +226,7 @@ func (list *List[T]) Values() []T {
 	return result
 }
 
+// Remove all the values from the list
 func (list *List[T]) Clear() {
 	for p := list.Begin(); p != list.End(); {
 		r := p
@@ -200,6 +236,8 @@ func (list *List[T]) Clear() {
 	list.len = 0
 }
 
+// Return the value at index offset into the list
+// The list is not internally indexed so this function has O(n) complexity
 func (list *List[T]) At(index int) T {
 	if index < 0 || index >= list.len {
 		panic("list At called with index out of bounds")
@@ -212,6 +250,8 @@ func (list *List[T]) At(index int) T {
 	return p.value
 }
 
+// Reverse the elements of the list
+// Requires n/2 swaps
 func (list *List[T]) Reverse() {
 	if list.Len() <= 1 {
 		return
@@ -220,19 +260,15 @@ func (list *List[T]) Reverse() {
 	front := list.head.next
 	back := list.head.prev
 
+	// Swap the nodes from the front of the list with the ones at the back
 	for i := 0; i < list.Len()/2; i++ {
 		a, b := front, back
 		front, back = front.next, back.prev
 		a.Swap(b)
 	}
-
-	// p := list.End()
-	// for i := 0; i < list.len-1; i++ {
-	// 	splice(p, list.Begin(), list.Begin().next)
-	// 	p = p.prev
-	// }
 }
 
+// Remove [first, last) from their list and insert them before pos
 func (list *List[T]) Splice(pos, first, last *ListNode[T]) {
 	splice(pos, first, last)
 }

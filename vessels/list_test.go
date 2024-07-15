@@ -389,3 +389,14 @@ func TestListMerge(t *testing.T) {
 	expect(t, b.Len(), 0)
 	expect(t, a.Values(), []int{6, 7, 8})
 }
+
+func TestListFind(t *testing.T) {
+	list := NewList[int]()
+	list.Append(1, 2, 3, 4, 5)
+	node, ok := ListFind(list, 2)
+	expect(t, ok, true)
+	expect(t, node, list.Begin().Next())
+	node, ok = ListFind(list, 9)
+	expect(t, ok, false)
+	expect(t, node, list.End())
+}

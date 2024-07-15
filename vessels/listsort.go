@@ -2,29 +2,24 @@ package vessels
 
 import "cmp"
 
-/**
- * Sort the list according to cmp.Less
- */
+// Sort the list according to cmp.Less
+// Requires that T be cmp.Ordered, which is not a requirment of the underlying list
 func SortList[T cmp.Ordered](list *List[T]) {
 	if list.Len() > 0 {
 		sortNodes(list.Begin(), list.Len(), cmp.Less)
 	}
 }
 
-/**
- * Sort the list according to comp comparison function
- */
+// Sort the list according to comp comparison function
 func SortListFunc[T cmp.Ordered](list *List[T], comp func(a, b T) bool) {
 	if list.Len() > 0 {
 		sortNodes(list.Begin(), list.Len(), comp)
 	}
 }
 
-/**
-* Simple recursive merge sort. Avoids walking the list by recursing by half
-* down to single nodes and merging them back up.
-* Returns: (newFirst, newLast]
- */
+// Simple recursive merge sort. Avoids walking the list by recursing by half
+// down to single nodes and merging them back up.
+// Returns: (newFirst, newLast]
 func sortNodes[T cmp.Ordered](first *ListNode[T], size int,
 	comp func(a, b T) bool,
 ) (*ListNode[T], *ListNode[T]) {
@@ -43,13 +38,12 @@ func sortNodes[T cmp.Ordered](first *ListNode[T], size int,
 	return newFirst, newLast
 }
 
-/** Merge two sorted lists of nodes separated by a pivot (mid)
- * list1 is [first, mid)
- * list2 is [mid, last)
- * list2 is merged into list1
- * comp is a comparison function
- * returns the new first (last is also the new last)
- */
+// Merge two sorted lists of nodes separated by a pivot (mid)
+// list1 is [first, mid)
+// list2 is [mid, last)
+// list2 is merged into list1
+// comp is a comparison function
+// returns the new first (last is also the new last)
 func mergeOrderedNodes[T cmp.Ordered](
 	first, mid, last *ListNode[T],
 	comp func(a, b T) bool,

@@ -268,11 +268,12 @@ func (list *List[T]) Reverse() {
 	}
 }
 
-// Remove [first, last) from their list and insert them before pos
+// Remove the sequence [first, last) from its list and insert it before pos
 func (list *List[T]) Splice(pos, first, last *ListNode[T]) {
 	splice(pos, first, last)
 }
 
+// Remove values from the list where pred(value) is true
 func ListRemoveFunc[T any](list *List[T], pred func(v T) bool) int {
 	if list.Len() == 0 {
 		return 0
@@ -295,12 +296,15 @@ func ListRemoveFunc[T any](list *List[T], pred func(v T) bool) int {
 	return count
 }
 
+// Remove values from the list that match value using ==
+// Requires T to be comparable which is not a requirement of the underlying list
 func ListRemove[T comparable](list *List[T], value T) int {
 	return ListRemoveFunc(list, func(v T) bool {
 		return v == value
 	})
 }
 
+// Remove consecutive values from the list where pred(a, b) is true
 func ListUniqueFunc[T any](list *List[T], pred func(a, b T) bool) int {
 	if list.Len() <= 1 {
 		return 0
@@ -323,12 +327,15 @@ func ListUniqueFunc[T any](list *List[T], pred func(a, b T) bool) int {
 	return count
 }
 
+// Remove consecutive values from the list using ==
+// Requires T to be comparable which is not a requirement of the underlying list
 func ListUnique[T comparable](list *List[T]) int {
 	return ListUniqueFunc(list, func(a, b T) bool {
 		return a == b
 	})
 }
 
+// Merge sorted list "other" into sorted list "list" where comp(a, b) is true
 func ListMergeFunc[T any](list, other *List[T], comp func(a, b T) bool) {
 	if list == other || other.Len() == 0 {
 		return
@@ -362,11 +369,28 @@ func ListMergeFunc[T any](list, other *List[T], comp func(a, b T) bool) {
 	other.len = 0
 }
 
+// Merge sorted list "other" into sorted list "list" using cmp.Less
+// Requires that T be cmp.Ordered, which is not a requirement of the underlying list
 func ListMerge[T cmp.Ordered](list, other *List[T]) {
 	ListMergeFunc(list, other, cmp.Less)
 }
 
+func ListFindFunc[T any](list *List[T], pred func(a T) bool) (*ListNode[T], bool) {
+	first := list.Begin()
+	for first != list.End() {
+		if pred(first.value) {
+			return first, true
+		}
+		first = first.next
+	}
+	return list.End(), false
+}
+
+func ListFind[T comparable](list *List[T], v T) (*ListNode[T], bool) {
+	return ListFindFunc(list, func(a T) bool {
+		return a == v
+	})
+}
+
 // TODO: iterations
 // foreach
-// find
-// find_if

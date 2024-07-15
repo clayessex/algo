@@ -375,6 +375,9 @@ func ListMerge[T cmp.Ordered](list, other *List[T]) {
 	ListMergeFunc(list, other, cmp.Less)
 }
 
+// Find a value in list where pred(value) is true
+// Returns the (node, ok) if found, otherwise it returns
+// (list.End(), false)
 func ListFindFunc[T any](list *List[T], pred func(a T) bool) (*ListNode[T], bool) {
 	first := list.Begin()
 	for first != list.End() {
@@ -386,12 +389,16 @@ func ListFindFunc[T any](list *List[T], pred func(a T) bool) (*ListNode[T], bool
 	return list.End(), false
 }
 
+// Find a value v in list using ==
+// Returns the (node, ok) if found, otherwise it returns
+// (list.End(), false)
 func ListFind[T comparable](list *List[T], v T) (*ListNode[T], bool) {
 	return ListFindFunc(list, func(a T) bool {
 		return a == v
 	})
 }
 
+// Run a function f on every value in the list
 func (list *List[T]) ForEach(f func(v T)) {
 	for p := list.Begin(); p != list.End(); p = p.Next() {
 		f(p.value)

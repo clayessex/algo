@@ -268,9 +268,15 @@ func (list *List[T]) Reverse() {
 	}
 }
 
-// Remove the sequence [first, last) from its list and insert it before pos
-func (list *List[T]) Splice(pos, first, last *ListNode[T]) {
+// Remove the sequence [first, last) from srcList and insert it into list before pos
+func (list *List[T]) Splice(pos *ListNode[T], srcList *List[T], first, last *ListNode[T]) {
+	count := 0
+	for p := first; p != last; p = p.next {
+		count++
+	}
 	splice(pos, first, last)
+	srcList.len -= count
+	list.len += count
 }
 
 // Remove values from the list where pred(value) is true

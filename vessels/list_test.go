@@ -331,7 +331,18 @@ func TestList_internal_splice(t *testing.T) {
 func TestListSplice(t *testing.T) {
 	list := NewList[int]()
 	list.Append(1, 2, 3)
-	list.Splice(list.Begin(), list.Begin().Next(), list.End().Prev())
+	list.Splice(list.Begin(), list, list.Begin().Next(), list.End().Prev())
+	expect(t, list.Values(), []int{2, 1, 3})
+	expect(t, list.Len(), 3)
+	list.Clear()
+	list2 := NewList[int]()
+
+	list.Append(4, 5, 6)
+	list2.Append(1, 2, 3)
+	list.Splice(list.Begin(), list2, list2.Begin(), list2.End())
+	expect(t, list.Values(), []int{1, 2, 3, 4, 5, 6})
+	expect(t, list.Len(), 6)
+	expect(t, list2.Len(), 0)
 }
 
 func TestListRemove(t *testing.T) {

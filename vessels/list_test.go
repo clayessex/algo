@@ -400,3 +400,13 @@ func TestListFind(t *testing.T) {
 	expect(t, ok, false)
 	expect(t, node, list.End())
 }
+
+func TestListForEach(t *testing.T) {
+	list := NewList[int]()
+	list.Append(1, 2, 3, 4)
+	sum := 0
+	list.ForEach(func(v int) {
+		sum += v
+	})
+	expect(t, sum, 10)
+}

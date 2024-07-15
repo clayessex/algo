@@ -79,3 +79,45 @@ func mergeOrderedNodes[T any](
 
 	return newFirst
 }
+
+// Alternative non-recursive merge sort
+func SortListAlt[T cmp.Ordered](list *List[T]) {
+	SortListFuncAlt(list, cmp.Less)
+}
+
+// Non-recursive merge sort
+func SortListFuncAlt[T any](list *List[T], comp func(a, b T) bool) {
+	if list.Len() <= 1 {
+		return
+	}
+
+	buckets := make([]*List[T], 64)
+	for i := 0; i < len(buckets); i++ {
+		buckets[i] = NewList[T]()
+	}
+	topBucket := 0
+	hold := NewList[T]()
+
+	for list.Len() > 0 {
+		splice(hold.Begin(), list.Begin(), list.Begin().Next()) // take 1
+		list.len--
+		hold.len++
+
+		i := 0
+		for i != topBucket && buckets[i].len != 0 {
+			ListMergeFunc(buckets[i], hold, comp)
+			hold.Swap(buckets[i])
+			i++
+		}
+		hold.Swap(buckets[i])
+		if i == topBucket {
+			topBucket++
+		}
+	}
+
+	for i := 1; i < topBucket; i++ {
+		ListMergeFunc(buckets[i], buckets[i-1], comp)
+	}
+
+	buckets[topBucket-1].Swap(list)
+}

@@ -193,3 +193,43 @@ func BenchmarkSortSlice_100K(b *testing.B) { benchmarkSliceSort(b, 100000) }
 func BenchmarkSortSlice_1M(b *testing.B)   { benchmarkSliceSort(b, 1000000) }
 func BenchmarkSortSlice_10M(b *testing.B)  { benchmarkSliceSort(b, 10000000) }
 func BenchmarkSortSlice_100M(b *testing.B) { benchmarkSliceSort(b, 100000000) }
+
+func TestSortListAlt(t *testing.T) {
+	// t.Skip()
+	list := NewList[int]()
+	SortListAlt(list)
+
+	list.Append(9, 8, 7, 6, 5, 4, 3, 2, 1)
+	SortListAlt(list)
+	expectOrdered(t, list.Begin(), list.End())
+	expect(t, list.Len(), 9)
+
+	list.Clear()
+	list.Append(
+		249, 139, 93, 55, 25, 158, 198, 77, 67, 68, 255, 128, 135, 147, 198, 219,
+		59, 243, 210, 70, 112, 15, 68, 69, 39, 166, 132, 161, 233, 83, 166, 126,
+		74, 11, 129, 186, 26, 29, 149, 150, 247, 172, 99, 235, 12, 128, 131, 183,
+		82, 56, 221, 162, 211, 216, 91, 157, 214, 29, 195, 97, 189, 250, 205, 85,
+		78, 185, 60, 29, 160, 49, 16, 32, 253, 211, 141, 162, 251, 183, 200, 151,
+		142, 197, 197, 88, 49, 3, 210, 197, 92, 9, 251, 222, 108, 60, 234, 34,
+		25, 6, 142, 238,
+	)
+	SortListAlt(list)
+	expectOrdered(t, list.Begin(), list.End())
+	expect(t, list.Len(), 100)
+	expect(t, isOrdered(list.Begin(), list.End()), true)
+}
+
+func benchmarkSortListAlt(b *testing.B, size int) {
+	list := NewList[int]()
+	for i := 0; i < size; i++ {
+		list.PushBack(rand.Int())
+	}
+	b.ResetTimer()
+	SortListAlt(list)
+}
+
+func BenchmarkSortListAlt_100K(b *testing.B) { benchmarkSortListAlt(b, 100000) }
+func BenchmarkSortListAlt_1M(b *testing.B)   { benchmarkSortListAlt(b, 1000000) }
+func BenchmarkSortListAlt_10M(b *testing.B)  { benchmarkSortListAlt(b, 10000000) }
+func BenchmarkSortListAlt_100M(b *testing.B) { benchmarkSortListAlt(b, 100000000) }

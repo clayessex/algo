@@ -2,6 +2,8 @@ package vessels
 
 import (
 	"cmp"
+	"math/rand"
+	"slices"
 	"testing"
 )
 
@@ -163,3 +165,31 @@ func FuzzListSortList(f *testing.F) {
 		}
 	})
 }
+
+func benchmarkSortList(b *testing.B, size int) {
+	list := NewList[int]()
+	for i := 0; i < size; i++ {
+		list.PushBack(rand.Int())
+	}
+	b.ResetTimer()
+	SortList(list)
+}
+
+func BenchmarkSortList_100K(b *testing.B) { benchmarkSortList(b, 100000) }
+func BenchmarkSortList_1M(b *testing.B)   { benchmarkSortList(b, 1000000) }
+func BenchmarkSortList_10M(b *testing.B)  { benchmarkSortList(b, 10000000) }
+func BenchmarkSortList_100M(b *testing.B) { benchmarkSortList(b, 100000000) }
+
+func benchmarkSliceSort(b *testing.B, size int) {
+	v := make([]int, 0, size)
+	for i := 0; i < size; i++ {
+		v = append(v, rand.Int())
+	}
+	b.ResetTimer()
+	slices.Sort(v)
+}
+
+func BenchmarkSortSlice_100K(b *testing.B) { benchmarkSliceSort(b, 100000) }
+func BenchmarkSortSlice_1M(b *testing.B)   { benchmarkSliceSort(b, 1000000) }
+func BenchmarkSortSlice_10M(b *testing.B)  { benchmarkSliceSort(b, 10000000) }
+func BenchmarkSortSlice_100M(b *testing.B) { benchmarkSliceSort(b, 100000000) }

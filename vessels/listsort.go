@@ -11,7 +11,8 @@ func SortList[T cmp.Ordered](list *List[T]) {
 }
 
 // Sort the list according to comp comparison function
-func SortListFunc[T cmp.Ordered](list *List[T], comp func(a, b T) bool) {
+// comp is a comparison function that returns true if a is ordered before b
+func SortListFunc[T any](list *List[T], comp func(a, b T) bool) {
 	if list.Len() > 0 {
 		sortNodes(list.Begin(), list.Len(), comp)
 	}
@@ -19,8 +20,9 @@ func SortListFunc[T cmp.Ordered](list *List[T], comp func(a, b T) bool) {
 
 // Simple recursive merge sort. Avoids walking the list by recursing by half
 // down to single nodes and merging them back up.
+// comp is a comparison function that returns true if a is ordered before b
 // Returns: (newFirst, newLast]
-func sortNodes[T cmp.Ordered](first *ListNode[T], size int,
+func sortNodes[T any](first *ListNode[T], size int,
 	comp func(a, b T) bool,
 ) (*ListNode[T], *ListNode[T]) {
 	switch size {
@@ -42,9 +44,9 @@ func sortNodes[T cmp.Ordered](first *ListNode[T], size int,
 // list1 is [first, mid)
 // list2 is [mid, last)
 // list2 is merged into list1
-// comp is a comparison function
+// comp is a comparison function that returns true if a is ordered before b
 // returns the new first (last is also the new last)
-func mergeOrderedNodes[T cmp.Ordered](
+func mergeOrderedNodes[T any](
 	first, mid, last *ListNode[T],
 	comp func(a, b T) bool,
 ) *ListNode[T] {

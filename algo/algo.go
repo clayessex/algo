@@ -25,3 +25,8 @@ func Filter[T any](s []T, f func(T) bool) []T {
 	}
 	return result
 }
+
+func Rotate[T any](s []T, middle int) []T {
+	s = append(s[middle:], s[:middle]...)
+	return s
+}

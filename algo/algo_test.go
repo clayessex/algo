@@ -32,3 +32,9 @@ func TestFilter(t *testing.T) {
 	f := Filter(s, func(v int) bool { return v != 3 })
 	expect(t, f, []int{1, 2, 4})
 }
+
+func TestRotate(t *testing.T) {
+	s := []int{1, 2, 3, 4, 5, 6}
+	s = Rotate(s, 3)
+	expect(t, s, []int{4, 5, 6, 1, 2, 3})
+}

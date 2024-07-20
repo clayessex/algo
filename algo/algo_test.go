@@ -38,3 +38,9 @@ func TestRotate(t *testing.T) {
 	s = Rotate(s, 3)
 	expect(t, s, []int{4, 5, 6, 1, 2, 3})
 }
+
+func TestCount(t *testing.T) {
+	s := []int{1, 2, 5, 5, 6, 5, 9, 8, 5}
+	i := Count(s, 5)
+	expect(t, i, 4)
+}

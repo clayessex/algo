@@ -30,3 +30,18 @@ func Rotate[T any](s []T, middle int) []T {
 	s = append(s[middle:], s[:middle]...)
 	return s
 }
+
+func CountFunc[T any](s []T, f func(value T) bool) int {
+	return Reduce(s, 0, func(acc int, v T) int {
+		if f(v) {
+			return acc + 1
+		}
+		return acc
+	})
+}
+
+func Count[T comparable](s []T, value T) int {
+	return CountFunc(s, func(v T) bool {
+		return v == value
+	})
+}

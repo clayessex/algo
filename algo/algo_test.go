@@ -65,3 +65,12 @@ func TestMerge(t *testing.T) {
 		expect(t, Merge(v.a, v.b), v.want)
 	}
 }
+
+func TestClamp(t *testing.T) {
+	s := []int{1, 3, 5, 6, 8, 9}
+	r := make([]int, 0, len(s))
+	for _, v := range s {
+		r = append(r, Clamp(v, 3, 6))
+	}
+	expect(t, r, []int{3, 3, 5, 6, 6, 6})
+}

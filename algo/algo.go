@@ -90,3 +90,18 @@ func MergeFunc[T any](a, b []T, comp func(x, y T) bool) []T {
 
 	return r
 }
+
+func Clamp[T cmp.Ordered](v, lo, hi T) T {
+	return ClampFunc(v, lo, hi, func(a, b T) bool {
+		return a < b
+	})
+}
+
+func ClampFunc[T any](v, lo, hi T, comp func(a, b T) bool) T {
+	if comp(v, lo) {
+		return lo
+	} else if comp(hi, v) {
+		return hi
+	}
+	return v
+}

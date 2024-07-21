@@ -1,5 +1,7 @@
 package algo
 
+import "cmp"
+
 func Map[T any, O any](s []T, f func(T) O) []O {
 	result := make([]O, 0, len(s))
 	for _, v := range s {
@@ -44,4 +46,47 @@ func Count[T comparable](s []T, value T) int {
 	return CountFunc(s, func(v T) bool {
 		return v == value
 	})
+}
+
+func Merge[T cmp.Ordered](a []T, b []T) []T {
+	return MergeFunc(a, b, func(x T, y T) bool {
+		return x < y
+	})
+}
+
+func MergeFunc[T any](a []T, b []T, comp func(x T, y T) bool) []T {
+	r := make([]T, 0, len(a)+len(b))
+
+	i, j := 0, 0
+	for i < len(a) && j < len(b) {
+		if comp(a[i], b[j]) {
+			k := i
+			for k != len(a) {
+				if !comp(a[k], b[j]) {
+					break
+				}
+				k++
+			}
+			r = append(r, a[i:k]...)
+			i = k
+		} else {
+			k := j
+			for k != len(b) {
+				if !comp(b[k], a[i]) {
+					break
+				}
+				k++
+			}
+			r = append(r, b[j:k]...)
+			j = k
+		}
+	}
+
+	if i < len(a) {
+		r = append(r, a[i:]...)
+	} else if j < len(b) {
+		r = append(r, b[j:]...)
+	}
+
+	return r
 }

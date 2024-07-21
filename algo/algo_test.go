@@ -44,3 +44,24 @@ func TestCount(t *testing.T) {
 	i := Count(s, 5)
 	expect(t, i, 4)
 }
+
+func TestMerge(t *testing.T) {
+	data := []struct {
+		name string
+		a    []int
+		b    []int
+		want []int
+	}{
+		{"1", []int{}, []int{}, []int{}},
+		{"2", []int{1, 2, 3}, []int{}, []int{1, 2, 3}},
+		{"3", []int{}, []int{1, 2, 3}, []int{1, 2, 3}},
+		{"4", []int{1, 2, 5, 7}, []int{3, 4, 6, 8, 9}, []int{1, 2, 3, 4, 5, 6, 7, 8, 9}},
+		{"5", []int{1, 2, 6, 7}, []int{3, 4}, []int{1, 2, 3, 4, 6, 7}},
+		{"6", []int{1, 2}, []int{3, 4}, []int{1, 2, 3, 4}},
+		{"7", []int{3, 4}, []int{1, 2}, []int{1, 2, 3, 4}},
+	}
+
+	for _, v := range data {
+		expect(t, Merge(v.a, v.b), v.want)
+	}
+}

@@ -48,13 +48,13 @@ func Count[T comparable](s []T, value T) int {
 	})
 }
 
-func Merge[T cmp.Ordered](a []T, b []T) []T {
-	return MergeFunc(a, b, func(x T, y T) bool {
+func Merge[T cmp.Ordered](a, b []T) []T {
+	return MergeFunc(a, b, func(x, y T) bool {
 		return x < y
 	})
 }
 
-func MergeFunc[T any](a []T, b []T, comp func(x T, y T) bool) []T {
+func MergeFunc[T any](a, b []T, comp func(x, y T) bool) []T {
 	r := make([]T, 0, len(a)+len(b))
 
 	i, j := 0, 0

@@ -7,14 +7,14 @@ import (
 
 func TestNewSet(t *testing.T) {
 	s := NewSet[int]()
-	expect(t, len(s.m), 0)
+	expect(t, len(s), 0)
 	s = NewSet(1, 2, 3)
-	expect(t, len(s.m), 3)
+	expect(t, len(s), 3)
 }
 
 func TestSetLen(t *testing.T) {
 	s := NewSet(1, 2, 3)
-	expect(t, s.Len(), len(s.m))
+	expect(t, s.Len(), len(s))
 }
 
 func TestSetContains(t *testing.T) {
@@ -143,4 +143,14 @@ func TestSetForEach(t *testing.T) {
 		value += x
 	})
 	expect(t, value, 6)
+}
+
+func TestSetRangeable(t *testing.T) {
+	s := NewSet(1, 2, 3)
+	var x []int
+	for k := range s {
+		x = append(x, k)
+	}
+	slices.Sort(x)
+	expect(t, x, []int{1, 2, 3})
 }

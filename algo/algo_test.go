@@ -1,6 +1,7 @@
 package algo
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/clayessex/godev/expected"
@@ -73,4 +74,20 @@ func TestClamp(t *testing.T) {
 		r = append(r, Clamp(v, 3, 6))
 	}
 	expect(t, r, []int{3, 3, 5, 6, 6, 6})
+}
+
+func TestMapKeys(t *testing.T) {
+	s := make(map[int]int)
+	s[3], s[9], s[7] = 1, 2, 3
+	keys := MapKeys(s)
+	slices.Sort(keys)
+	expect(t, keys, []int{3, 7, 9})
+}
+
+func TestMapValues(t *testing.T) {
+	s := make(map[int]int)
+	s[3], s[9], s[7] = 1, 2, 3
+	values := MapValues(s)
+	slices.Sort(values)
+	expect(t, values, []int{1, 2, 3})
 }

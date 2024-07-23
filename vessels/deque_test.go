@@ -21,11 +21,11 @@ func makeTestDeque[T any](values []T, head int, tail int) *Deque[T] {
 
 func Test_internal_NewDeque(t *testing.T) {
 	d := NewDeque[int](4)
-	if len(d.buf) != 4 {
-		t.Fatalf("NewDeque failed: expected cap: %v, got %v", 4, len(d.buf))
+	if len(d.buf) != 5 {
+		t.Fatalf("NewDeque failed: expected cap: %v, got %v", 5, len(d.buf))
 	}
-	if len(d.buf) != 4 {
-		t.Fatalf("NewDeque failed: expected len: %v, got %v", 4, len(d.buf))
+	if len(d.buf) != 5 {
+		t.Fatalf("NewDeque failed: expected len: %v, got %v", 5, len(d.buf))
 	}
 }
 
@@ -67,15 +67,15 @@ func Test_internal_PushBack(t *testing.T) {
 	d.PushBack(9)
 	expect(t, d, &Deque[int]{[]int{9, 0}, 1, 0})
 	d.PushBack(8)
-	expect(t, d, &Deque[int]{[]int{9, 8, 0, 0}, 2, 0})
+	expect(t, d, &Deque[int]{[]int{9, 8, 0}, 2, 0})
 	d.PushBack(7)
-	expect(t, d, &Deque[int]{[]int{9, 8, 7, 0}, 3, 0})
+	expect(t, d, &Deque[int]{[]int{9, 8, 7, 0, 0}, 3, 0})
 
 	d = &Deque[int]{[]int{0, 8, 7, 0}, 3, 1}
 	d.PushBack(6)
 	expect(t, d, &Deque[int]{[]int{0, 8, 7, 6}, 0, 1})
 	d.PushBack(5)
-	expect(t, d, &Deque[int]{[]int{8, 7, 6, 5, 0, 0, 0, 0}, 4, 0})
+	expect(t, d, &Deque[int]{[]int{8, 7, 6, 5, 0, 0, 0}, 4, 0})
 
 	d = &Deque[int]{[]int{7, 0, 0, 8}, 1, 3}
 	d.PushBack(6)
@@ -139,6 +139,8 @@ func TestCap(t *testing.T) {
 	d := NewDeque[int](2)
 	expect(t, d.Cap(), 2)
 	d.PushBack(9)
+	d.PushBack(8)
+	expect(t, d.Cap(), 2)
 	d.PushBack(8)
 	expect(t, d.Cap(), 4)
 }
@@ -321,7 +323,7 @@ func TestAutoResize(t *testing.T) {
 	d.PushBack(9)
 	d.PushBack(8)
 	expect(t, d.Len(), 2)
-	expect(t, d.Cap(), 4) // Internal
+	expect(t, d.Cap(), 2) // Internal
 	d.PushBack(7)
 	d.PushBack(6)
 	d.PushBack(5)

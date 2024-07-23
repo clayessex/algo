@@ -27,6 +27,8 @@ func TestStackCap(t *testing.T) {
 	expect(t, s.Cap(), 2)
 	s.Push(9)
 	s.Push(8)
+	expect(t, s.Cap(), 2) // warn: internal
+	s.Push(7)
 	expect(t, s.Cap(), 4) // warn: internal
 }
 

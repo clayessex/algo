@@ -27,6 +27,8 @@ func TestQueueCap(t *testing.T) {
 	expect(t, q.Cap(), 2)
 	q.Push(9)
 	q.Push(8)
+	expect(t, q.Cap(), 2) // warn: internal
+	q.Push(7)
 	expect(t, q.Cap(), 4) // warn: internal
 }
 

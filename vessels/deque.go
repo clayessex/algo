@@ -1,7 +1,7 @@
 /**
 * Deque
 * Double ended queue implemented using a ring buffer
-* Holds (size - 1) items of T before the size is automatically doubled.
+* Holds size items of T before the size is automatically doubled.
  */
 
 package vessels
@@ -30,7 +30,7 @@ type Deque[T any] struct {
 }
 
 /**
- * Create a new Deque[T] sized to hold size-1 items
+ * Create a new Deque[T] sized to hold size items
  * before automatically resizing.
  */
 func NewDeque[T any](size ...int) *Deque[T] {
@@ -39,7 +39,7 @@ func NewDeque[T any](size ...int) *Deque[T] {
 		sz = size[0]
 	}
 	return &Deque[T]{
-		make([]T, sz),
+		make([]T, sz+1),
 		0,
 		0,
 	}
@@ -65,8 +65,8 @@ func (d *Deque[T]) copy(dst []T) int {
 
 /** double the size of the buffer and copy the old one over */
 func (d *Deque[T]) grow() {
-	newSize := len(d.buf) * 2
-	newBuf := make([]T, newSize)
+	newSize := d.Cap() * 2
+	newBuf := make([]T, newSize+1)
 	d.head = d.copy(newBuf)
 	d.tail = 0
 	d.buf = newBuf
@@ -74,11 +74,11 @@ func (d *Deque[T]) grow() {
 
 /** half the size of the buffer if the current Len will fit */
 func (d *Deque[T]) shrink() {
-	newSize := len(d.buf) / 2
+	newSize := d.Cap() / 2
 	if newSize < INITIAL_DEQUE_SIZE || newSize <= d.Len() {
 		return
 	}
-	newBuf := make([]T, newSize)
+	newBuf := make([]T, newSize+1)
 	d.head = d.copy(newBuf)
 	d.tail = 0
 	d.buf = newBuf
@@ -107,7 +107,7 @@ func (d *Deque[T]) Len() int {
 
 /** capacity of the deque */
 func (d *Deque[T]) Cap() int {
-	return len(d.buf)
+	return len(d.buf) - 1
 }
 
 /** append to the end of the buffer */

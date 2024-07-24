@@ -1,7 +1,6 @@
-# godev
-Golang development projects
 
-A collection of simple projects for learning Go
+# algo
 
-lrucache - a from scratch development of a simple LRUCache with no dependencies
+A collection of simple Go algorithms and containers
+
 

@@ -1,3 +1,3 @@
-module github.com/clayessex/godev
+module github.com/clayessex/algo
 
 go 1.22.4

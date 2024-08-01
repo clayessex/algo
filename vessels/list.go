@@ -405,7 +405,7 @@ func ListFind[T comparable](list *List[T], v T) (*ListNode[T], bool) {
 }
 
 // Run a function f on every value in the list
-func (list *List[T]) ForEach(f func(v T)) {
+func (list *List[T]) Range(f func(v T)) {
 	for p := list.Begin(); p != list.End(); p = p.Next() {
 		f(p.value)
 	}

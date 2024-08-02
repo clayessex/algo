@@ -98,14 +98,14 @@ func (m *OrderedMap[K, V]) First() K {
 	if m.ord.Len() == 0 {
 		panic("OrderedMap can't return First() when empty")
 	}
-	return m.ord.Front()
+	return m.ord.Back()
 }
 
 func (m *OrderedMap[K, V]) Last() K {
 	if m.ord.Len() == 0 {
 		panic("OrderedMap can't return Last() when empty")
 	}
-	return m.ord.Back()
+	return m.ord.Front()
 }
 
 func (m *OrderedMap[K, V]) Clear() {

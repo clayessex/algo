@@ -2,6 +2,8 @@ package vessels
 
 import (
 	"testing"
+
+	"github.com/clayessex/algo/expected"
 )
 
 func TestNewList(t *testing.T) {
@@ -103,6 +105,7 @@ func TestListIsEmpty(t *testing.T) {
 }
 
 func TestListSwap(t *testing.T) {
+	x := expected.New(t)
 	a := NewList[int]()
 	a.PushBack(9)
 	a.PushBack(8)
@@ -113,129 +116,130 @@ func TestListSwap(t *testing.T) {
 	b.PushBack(4)
 
 	a.Swap(b)
-	expect(t, a.Len(), 3)
-	expect(t, a.At(0), 6)
-	expect(t, a.At(1), 5)
-	expect(t, a.At(2), 4)
+	x.Expect(a.Len()).ToBe(3)
+	x.ExpectOk(a.At(0)).ToBe(6)
+	x.ExpectOk(a.At(1)).ToBe(5)
+	x.ExpectOk(a.At(2)).ToBe(4)
 }
 
 func TestListFront(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushBack(9)
-	expect(t, l.Front(), 9)
+	x.ExpectOk(l.Front()).ToBe(9)
 	l.PushFront(8)
-	expect(t, l.Front(), 8)
+	x.ExpectOk(l.Front()).ToBe(8)
 
-	defer func() { _ = recover() }()
 	l = NewList[int]()
-	l.Front()
-	t.Fatal("list Front() should panic on an empty list")
+	x.ExpectNotOk(l.Front())
 }
 
 func TestListBack(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushBack(9)
-	expect(t, l.Back(), 9)
+	x.ExpectOk(l.Back()).ToBe(9)
 	l.PushFront(8)
-	expect(t, l.Back(), 9)
+	x.ExpectOk(l.Back()).ToBe(9)
 
-	defer func() { _ = recover() }()
 	l = NewList[int]()
-	l.Back()
-	t.Fatal("list Front() should panic on an empty list")
+	x.ExpectNotOk(l.Back())
 }
 
 func TestListInsertBefore(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.InsertBefore(8, l.End())
-	expect(t, l.Len(), 1)
+	x.Expect(l.Len()).ToBe(1)
 	l.InsertBefore(7, l.Begin())
 	l.InsertBefore(9, l.End())
-	expect(t, l.Len(), 3)
-	expect(t, l.At(0), 7)
-	expect(t, l.At(1), 8)
-	expect(t, l.At(2), 9)
+	x.Expect(l.Len()).ToBe(3)
+	x.ExpectOk(l.At(0)).ToBe(7)
+	x.ExpectOk(l.At(1)).ToBe(8)
+	x.ExpectOk(l.At(2)).ToBe(9)
 }
 
 func TestListInsertAfter(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.InsertAfter(9, l.head)
-	expect(t, l.Len(), 1)
+	x.Expect(l.Len()).ToBe(1)
 	l.InsertAfter(7, l.End())
 	l.InsertAfter(8, l.Begin())
-	expect(t, l.Len(), 3)
-	expect(t, l.At(0), 7)
-	expect(t, l.At(1), 8)
-	expect(t, l.At(2), 9)
+	x.Expect(l.Len()).ToBe(3)
+	x.ExpectOk(l.At(0)).ToBe(7)
+	x.ExpectOk(l.At(1)).ToBe(8)
+	x.ExpectOk(l.At(2)).ToBe(9)
 }
 
 func TestListPushBack(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushBack(9)
-	expect(t, l.Len(), 1)
+	x.Expect(l.Len()).ToBe(1)
 	l.PushBack(8)
 	l.PushBack(7)
-	expect(t, l.Len(), 3)
+	x.Expect(l.Len()).ToBe(3)
 
-	expect(t, l.At(0), 9)
-	expect(t, l.At(1), 8)
-	expect(t, l.At(2), 7)
+	x.ExpectOk(l.At(0)).ToBe(9)
+	x.ExpectOk(l.At(1)).ToBe(8)
+	x.ExpectOk(l.At(2)).ToBe(7)
 }
 
 func TestListPopBack(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushBack(9)
 	l.PushBack(8)
 	l.PushBack(7)
 
-	expect(t, l.PopBack(), 7)
-	expect(t, l.PopBack(), 8)
-	expect(t, l.PopBack(), 9)
+	x.ExpectOk(l.PopBack()).ToBe(7)
+	x.ExpectOk(l.PopBack()).ToBe(8)
+	x.ExpectOk(l.PopBack()).ToBe(9)
 
-	defer func() { _ = recover() }()
-	l.PopBack()
-	t.Fatal("List PopBack() should panic when empty")
+	x.ExpectNotOk(l.PopBack())
 }
 
 func TestListPushFront(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushFront(9)
 	l.PushFront(8)
 	l.PushFront(7)
-	expect(t, l.Len(), 3)
+	x.Expect(l.Len()).ToBe(3)
 
-	expect(t, l.PopBack(), 9)
-	expect(t, l.PopBack(), 8)
-	expect(t, l.PopBack(), 7)
-	expect(t, l.Len(), 0)
+	x.ExpectOk(l.PopBack()).ToBe(9)
+	x.ExpectOk(l.PopBack()).ToBe(8)
+	x.ExpectOk(l.PopBack()).ToBe(7)
+	x.Expect(l.Len()).ToBe(0)
 }
 
 func TestListPopFront(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushBack(9)
 	l.PushBack(8)
 	l.PushBack(7)
 
-	expect(t, l.PopFront(), 9)
-	expect(t, l.PopFront(), 8)
-	expect(t, l.PopFront(), 7)
+	x.ExpectOk(l.PopFront()).ToBe(9)
+	x.ExpectOk(l.PopFront()).ToBe(8)
+	x.ExpectOk(l.PopFront()).ToBe(7)
 
-	defer func() { _ = recover() }()
-	l.PopFront()
-	t.Fatal("List PopFront() should panic when empty")
+	x.ExpectNotOk(l.PopFront())
 }
 
 func TestListAppend(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.Append(9)
-	expect(t, l.Len(), 1)
-	expect(t, l.At(0), 9)
+	x.Expect(l.Len()).ToBe(1)
+	x.ExpectOk(l.At(0)).ToBe(9)
 	l.Append(8, 7, 6)
-	expect(t, l.Len(), 4)
-	expect(t, l.At(0), 9)
-	expect(t, l.At(1), 8)
-	expect(t, l.At(2), 7)
-	expect(t, l.At(3), 6)
+	x.Expect(l.Len()).ToBe(4)
+	x.ExpectOk(l.At(0)).ToBe(9)
+	x.ExpectOk(l.At(1)).ToBe(8)
+	x.ExpectOk(l.At(2)).ToBe(7)
+	x.ExpectOk(l.At(3)).ToBe(6)
 }
 
 func TestListValues(t *testing.T) {
@@ -259,49 +263,49 @@ func TestListClear(t *testing.T) {
 }
 
 func TestListAt(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushBack(9)
 	l.PushBack(8)
 	l.PushBack(7)
-	expect(t, l.At(0), 9)
-	expect(t, l.At(1), 8)
-	expect(t, l.At(2), 7)
-
-	defer func() { _ = recover() }()
-	l.At(l.Len())
-	t.Fatal("List At() should panic with invalid index")
+	x.ExpectOk(l.At(0)).ToBe(9)
+	x.ExpectOk(l.At(1)).ToBe(8)
+	x.ExpectOk(l.At(2)).ToBe(7)
+	x.ExpectNotOk(l.At(l.Len()))
 }
 
 func TestListReverse(t *testing.T) {
+	x := expected.New(t)
 	l := NewList[int]()
 	l.PushBack(9)
 	l.PushBack(8)
 	l.PushBack(7)
 	l.PushBack(6)
 	l.PushBack(5)
-	expect(t, l.Len(), 5)
-	expect(t, l.At(0), 9)
-	expect(t, l.At(1), 8)
-	expect(t, l.At(2), 7)
-	expect(t, l.At(3), 6)
-	expect(t, l.At(4), 5)
+	x.Expect(l.Len()).ToBe(5)
+	x.ExpectOk(l.At(0)).ToBe(9)
+	x.ExpectOk(l.At(1)).ToBe(8)
+	x.ExpectOk(l.At(2)).ToBe(7)
+	x.ExpectOk(l.At(3)).ToBe(6)
+	x.ExpectOk(l.At(4)).ToBe(5)
 	l.Reverse()
-	expect(t, l.At(0), 5)
-	expect(t, l.At(1), 6)
-	expect(t, l.At(2), 7)
-	expect(t, l.At(3), 8)
-	expect(t, l.At(4), 9)
+	x.ExpectOk(l.At(0)).ToBe(5)
+	x.ExpectOk(l.At(1)).ToBe(6)
+	x.ExpectOk(l.At(2)).ToBe(7)
+	x.ExpectOk(l.At(3)).ToBe(8)
+	x.ExpectOk(l.At(4)).ToBe(9)
 	l.Clear()
 	l.PushBack(1)
 	l.Reverse()
-	expect(t, l.At(0), 1)
+	x.ExpectOk(l.At(0)).ToBe(1)
 	l.PushBack(2)
 	l.Reverse()
-	expect(t, l.At(0), 2)
-	expect(t, l.At(1), 1)
+	x.ExpectOk(l.At(0)).ToBe(2)
+	x.ExpectOk(l.At(1)).ToBe(1)
 }
 
 func TestList_internal_splice(t *testing.T) {
+	x := expected.New(t)
 	a := NewList[int]()
 	a.PushBack(9)
 	a.PushBack(8)
@@ -314,14 +318,14 @@ func TestList_internal_splice(t *testing.T) {
 	splice(a.Begin().Next(), b.Begin(), b.End())
 	a.len += 3
 
-	expect(t, a.Len(), 6)
+	x.Expect(a.Len()).ToBe(6)
 
-	expect(t, a.At(0), 9)
-	expect(t, a.At(1), 6)
-	expect(t, a.At(2), 5)
-	expect(t, a.At(3), 4)
-	expect(t, a.At(4), 8)
-	expect(t, a.At(5), 7)
+	x.ExpectOk(a.At(0)).ToBe(9)
+	x.ExpectOk(a.At(1)).ToBe(6)
+	x.ExpectOk(a.At(2)).ToBe(5)
+	x.ExpectOk(a.At(3)).ToBe(4)
+	x.ExpectOk(a.At(4)).ToBe(8)
+	x.ExpectOk(a.At(5)).ToBe(7)
 
 	splice(a.Begin(), a.Begin(), a.Begin().Next())
 	expect(t, a.Len(), 6)
@@ -346,13 +350,14 @@ func TestListSplice(t *testing.T) {
 }
 
 func TestListRemove(t *testing.T) {
+	x := expected.New(t)
 	list := NewList[int]()
 	ListRemove(list, 99)
 	list.Append(4, 5, 6)
 	count := ListRemove(list, 5)
-	expect(t, list.At(0), 4)
-	expect(t, list.At(1), 6)
-	expect(t, count, 1)
+	x.ExpectOk(list.At(0)).ToBe(4)
+	x.ExpectOk(list.At(1)).ToBe(6)
+	x.Expect(count).ToBe(1)
 }
 
 func TestListUnique(t *testing.T) {

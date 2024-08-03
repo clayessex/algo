@@ -61,7 +61,11 @@ func (m *OrderedMap[K, V]) Pop() (K, bool) {
 		var zero K
 		return zero, false
 	}
-	key := m.ord.PopBack()
+	key, ok := m.ord.PopBack()
+	if !ok {
+		var zero K
+		return zero, false
+	}
 	delete(m.del, key)
 	delete(m.data, key)
 	return key, true
@@ -100,7 +104,7 @@ func (m *OrderedMap[K, V]) First() (K, bool) {
 		var zero K
 		return zero, false
 	}
-	return m.ord.Back(), true
+	return m.ord.Back()
 }
 
 func (m *OrderedMap[K, V]) Last() (K, bool) {
@@ -108,7 +112,7 @@ func (m *OrderedMap[K, V]) Last() (K, bool) {
 		var zero K
 		return zero, false
 	}
-	return m.ord.Front(), true
+	return m.ord.Front()
 }
 
 func (m *OrderedMap[K, V]) Clear() {

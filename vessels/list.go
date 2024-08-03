@@ -135,20 +135,24 @@ func (list *List[T]) End() *ListNode[T] {
 	return list.head
 }
 
-// First value of the list
-func (list *List[T]) Front() T {
+// First value of the list unless the list is empty, then it returns a default
+// initialized value and false
+func (list *List[T]) Front() (T, bool) {
 	if list.len == 0 {
-		panic("list Front() called on empty list")
+		var zero T
+		return zero, false
 	}
-	return list.head.next.value
+	return list.head.next.value, true
 }
 
-// Last value of the list
-func (list *List[T]) Back() T {
+// Last value of the list unless the list is empty, then it returns a default
+// initialized value and false
+func (list *List[T]) Back() (T, bool) {
 	if list.len == 0 {
-		panic("list Back() called on empty list")
+		var zero T
+		return zero, false
 	}
-	return list.head.prev.value
+	return list.head.prev.value, true
 }
 
 // Insert the value into the list before node pos
@@ -184,25 +188,29 @@ func (list *List[T]) PushFront(v T) *ListNode[T] {
 	return list.insert(v, list.Begin())
 }
 
-// Remove the last value from the list and return it
-func (list *List[T]) PopBack() T {
+// Remove the last value from the list and return it unless the list is empty,
+// then it returns a default initialized value and false
+func (list *List[T]) PopBack() (T, bool) {
 	if list.len == 0 {
-		panic("list PopBack() called on empty list")
+		var zero T
+		return zero, false
 	}
 	p := list.End().prev
 	value := p.value
 	list.RemoveNode(p)
-	return value
+	return value, true
 }
 
-// Remove the first value from the list and return it
-func (list *List[T]) PopFront() T {
+// Remove the first value from the list and return it unless the list is empty,
+// then it returns a default initialized value and false
+func (list *List[T]) PopFront() (T, bool) {
 	if list.len == 0 {
-		panic("list PopFront() called on empty list")
+		var zero T
+		return zero, false
 	}
 	value := list.Begin().value
 	list.RemoveNode(list.Begin())
-	return value
+	return value, true
 }
 
 // Append one or more values to the list
@@ -236,18 +244,20 @@ func (list *List[T]) Clear() {
 	list.len = 0
 }
 
-// Return the value at index offset into the list
-// The list is not internally indexed so this function has O(n) complexity
-func (list *List[T]) At(index int) T {
+// Return the value at index offset into the list and true or a default
+// initialized value and false if the index is out of range. The list is not
+// internally indexed so this function has O(n) complexity
+func (list *List[T]) At(index int) (T, bool) {
 	if index < 0 || index >= list.len {
-		panic("list At called with index out of bounds")
+		var zero T
+		return zero, false
 	}
 	p := list.Begin()
 	for ; index > 0; index-- {
 		p = p.Next()
 	}
 
-	return p.value
+	return p.value, true
 }
 
 // Reverse the elements of the list

@@ -21,9 +21,16 @@ func TestInsert(t *testing.T) {
 	m.Insert("a", 9)
 	m.Insert("b", 8)
 	m.Insert("c", 7)
-	expect(t, m.Len(), 3)
-	expect(t, m.First(), "c") // fifo
-	expect(t, m.Last(), "a")
+
+	x := expected.New(t)
+	x.Expect(m.Len()).ToBe(3)
+	x.Expect(m.First()).ToBe("c")
+	x.Expect(m.Last()).ToBe("a")
+
+	x.ExpectOk(m.Value("a")).ToBe(9)
+	m.Insert("a", 3)
+	x.Expect(m.Last()).ToBe("a")
+	x.ExpectOk(m.Value("a")).ToBe(3)
 }
 
 func TestContains(t *testing.T) {
@@ -35,11 +42,11 @@ func TestContains(t *testing.T) {
 	expect(t, m.Contains(2), true)
 }
 
-func TestValue(tt *testing.T) {
+func TestValue(t *testing.T) {
 	m := NewOrderedMap[int, int]()
 	m.Insert(1, 9)
 	m.Insert(2, 8)
-
-	t := expected.New(tt)
-	t.ExpectOk(m.Value(2)).ToBe(8)
+	x := expected.New(t)
+	x.ExpectOk(m.Value(2)).ToBe(8)
+	x.ExpectNotOk(m.Value(5))
 }

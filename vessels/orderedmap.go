@@ -56,14 +56,15 @@ func (m *OrderedMap[K, V]) Push(key K, value V) {
 	m.Insert(key, value)
 }
 
-func (m *OrderedMap[K, V]) Pop() K {
+func (m *OrderedMap[K, V]) Pop() (K, bool) {
 	if m.ord.Len() == 0 {
-		panic("OrderedMap can't Pop() when empty")
+		var zero K
+		return zero, false
 	}
 	key := m.ord.PopBack()
 	delete(m.del, key)
 	delete(m.data, key)
-	return key
+	return key, true
 }
 
 func (m *OrderedMap[K, V]) Next(key K) (K, bool) {
@@ -94,18 +95,20 @@ func (m *OrderedMap[K, V]) Prev(key K) (K, bool) {
 	return n.Prev().value, true
 }
 
-func (m *OrderedMap[K, V]) First() K {
+func (m *OrderedMap[K, V]) First() (K, bool) {
 	if m.ord.Len() == 0 {
-		panic("OrderedMap can't return First() when empty")
+		var zero K
+		return zero, false
 	}
-	return m.ord.Back()
+	return m.ord.Back(), true
 }
 
-func (m *OrderedMap[K, V]) Last() K {
+func (m *OrderedMap[K, V]) Last() (K, bool) {
 	if m.ord.Len() == 0 {
-		panic("OrderedMap can't return Last() when empty")
+		var zero K
+		return zero, false
 	}
-	return m.ord.Front()
+	return m.ord.Front(), true
 }
 
 func (m *OrderedMap[K, V]) Clear() {

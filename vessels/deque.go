@@ -46,19 +46,26 @@ func NewDeque[T any](size ...int) *Deque[T] {
 }
 
 /**
- * copy the deque buffer into dst, panics if dst is not large enough
- * returns number of elements copied
+ * copy the deque buffer into dst,
+ * returns number of elements copied which is the min of len(dst) and
+ * len(deque)
  */
 func (d *Deque[T]) copy(dst []T) int {
-	if len(dst) < d.Len() {
-		panic("deque too large to copy to dst")
-	}
+	size := min(len(dst), d.Len()) // number of elements left to copy
+
 	var n int
 	if d.tail <= d.head {
-		n = copy(dst, d.buf[d.tail:d.head])
+		diff := max(d.Len()-len(dst), 0) // difference between buffer sizes
+		top := d.head - diff
+		n = copy(dst, d.buf[d.tail:top])
 	} else {
-		n = copy(dst, d.buf[d.tail:])
-		n += copy(dst[n:], d.buf[:d.head])
+		top := min(cap(d.buf), d.tail+size)
+		n = copy(dst, d.buf[d.tail:top])
+		size -= n
+
+		if size > 0 {
+			n += copy(dst[n:], d.buf[:size])
+		}
 	}
 	return n
 }
@@ -129,56 +136,64 @@ func (d *Deque[T]) PushFront(v T) {
 }
 
 /** remove and return the last element */
-func (d *Deque[T]) PopBack() T {
+func (d *Deque[T]) PopBack() (T, bool) {
 	if d.Len() == 0 {
-		panic("can't PopBack() from an empty deque")
+		var zero T
+		return zero, false
 	}
 	d.head = d.prev(d.head)
-	return d.buf[d.head]
+	return d.buf[d.head], true
 }
 
 /** remove and return the first element */
-func (d *Deque[T]) PopFront() T {
+func (d *Deque[T]) PopFront() (T, bool) {
 	if d.Len() == 0 {
-		panic("can't PopFront() from an empty deque")
+		var zero T
+		return zero, false
 	}
 	result := d.buf[d.tail]
 	d.tail = d.next(d.tail)
-	return result
+	return result, true
 }
 
 /**
- * return the first element from the beginning of the Deque without removing it,
- * panics if the Deque is empty
+ * return the first element from the beginning of the Deque without removing it
+ * returns true if the element is valid, otherwise returns a zero initialized T
+ * value and false
  */
-func (d *Deque[T]) Front() T {
+func (d *Deque[T]) Front() (T, bool) {
 	if d.Len() == 0 {
-		panic("can't get front() element from an empty deque")
+		var zero T
+		return zero, false
 	}
-	return d.buf[d.tail]
+	return d.buf[d.tail], true
 }
 
 /**
  * return the last element from the end of the Deque without removing it,
- * panics if the Deque is empty
+ * returns true if the element is valid, otherwise returns a zero initialized T
+ * value and false
  */
-func (d *Deque[T]) Back() T {
+func (d *Deque[T]) Back() (T, bool) {
 	if d.Len() == 0 {
-		panic("can't get back() element from an empty deque")
+		var zero T
+		return zero, false
 	}
-	return d.buf[d.prev(d.head)]
+	return d.buf[d.prev(d.head)], true
 }
 
 /**
  * return the element at index without removing it,
- * panics if index is outside of range [0:Len()]
+ * returns true if the element is valid, otherwise returns a zero initialized T
+ * value and false when index is outsize of range [0:Len())
  */
-func (d *Deque[T]) At(index int) T {
+func (d *Deque[T]) At(index int) (T, bool) {
 	if index < 0 || index >= d.Len() {
-		panic("Deque At() invalid index")
+		var zero T
+		return zero, false
 	}
 	offset := (d.tail + index) % len(d.buf)
-	return d.buf[offset]
+	return d.buf[offset], true
 }
 
 /** remove all elements, leaving the deque empty */

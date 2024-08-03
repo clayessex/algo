@@ -2,6 +2,8 @@ package vessels
 
 import (
 	"testing"
+
+	"github.com/clayessex/algo/expected"
 )
 
 func TestNewStack(t *testing.T) {
@@ -33,37 +35,32 @@ func TestStackCap(t *testing.T) {
 }
 
 func TestStackPushPop(t *testing.T) {
+	x := expected.New(t)
 	s := NewStack[int](4)
 	s.Push(9)
 	s.Push(8)
 	s.Push(7)
-	expect(t, s.Len(), 3)
-	expect(t, s.Pop(), 7)
-	expect(t, s.Pop(), 8)
-	expect(t, s.Pop(), 9)
-	expect(t, s.Len(), 0)
-
-	// detect panic
-	defer func() { _ = recover() }()
-	s.Pop() // Should panic
-	t.Fatal("Stack Pop should panic when empty")
+	x.Expect(s.Len()).ToBe(3)
+	x.ExpectOk(s.Pop()).ToBe(7)
+	x.ExpectOk(s.Pop()).ToBe(8)
+	x.ExpectOk(s.Pop()).ToBe(9)
+	x.Expect(s.Len()).ToBe(0)
+	x.ExpectNotOk(s.Pop())
 }
 
 func TestStackAt(t *testing.T) {
+	x := expected.New(t)
 	s := NewStack[int](5)
 	s.Push(9)
 	s.Push(8)
 	s.Push(7)
 	s.Push(6)
-	expect(t, s.At(0), 9)
-	expect(t, s.Pop(), 6)
-	expect(t, s.At(0), 9)
-	expect(t, s.At(1), 8)
-	expect(t, s.At(2), 7)
-
-	defer func() { _ = recover() }()
-	s.At(3)
-	t.Fatal("Queue At() with an invalid index should have panicked")
+	x.ExpectOk(s.At(0)).ToBe(9)
+	x.ExpectOk(s.Pop()).ToBe(6)
+	x.ExpectOk(s.At(0)).ToBe(9)
+	x.ExpectOk(s.At(1)).ToBe(8)
+	x.ExpectOk(s.At(2)).ToBe(7)
+	x.ExpectNotOk(s.At(3))
 }
 
 func TestStackClear(t *testing.T) {
@@ -77,16 +74,17 @@ func TestStackClear(t *testing.T) {
 }
 
 func TestStackClone(t *testing.T) {
+	x := expected.New(t)
 	s := NewStack[int](4)
 	s.Push(9)
 	s.Push(8)
 	s.Push(7)
-	expect(t, s.Len(), 3)
+	x.Expect(s.Len()).ToBe(3)
 	c := s.Clone()
-	expect(t, c.Len(), 3)
-	expect(t, c.Pop(), 7)
-	expect(t, c.Pop(), 8)
-	expect(t, c.Pop(), 9)
-	expect(t, c.Len(), 0)
-	expect(t, s.Len(), 3)
+	x.Expect(c.Len()).ToBe(3)
+	x.ExpectOk(c.Pop()).ToBe(7)
+	x.ExpectOk(c.Pop()).ToBe(8)
+	x.ExpectOk(c.Pop()).ToBe(9)
+	x.Expect(c.Len()).ToBe(0)
+	x.Expect(s.Len()).ToBe(3)
 }

@@ -18,11 +18,11 @@ func (q *Queue[T]) Push(v T) {
 	(*Deque[T])(q).PushBack(v)
 }
 
-func (q *Queue[T]) Pop() T {
+func (q *Queue[T]) Pop() (T, bool) {
 	return (*Deque[T])(q).PopFront()
 }
 
-func (q *Queue[T]) At(index int) T {
+func (q *Queue[T]) At(index int) (T, bool) {
 	return (*Deque[T])(q).At(index)
 }
 

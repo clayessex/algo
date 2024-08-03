@@ -2,6 +2,8 @@ package vessels
 
 import (
 	"testing"
+
+	"github.com/clayessex/algo/expected"
 )
 
 func TestNewQueue(t *testing.T) {
@@ -33,37 +35,32 @@ func TestQueueCap(t *testing.T) {
 }
 
 func TestQueuePushPop(t *testing.T) {
+	x := expected.New(t)
 	q := NewQueue[int](4)
 	q.Push(9)
 	q.Push(8)
 	q.Push(7)
-	expect(t, q.Len(), 3)
-	expect(t, q.Pop(), 9)
-	expect(t, q.Pop(), 8)
-	expect(t, q.Pop(), 7)
-	expect(t, q.Len(), 0)
-
-	// detect panic
-	defer func() { _ = recover() }()
-	q.Pop() // Should panic
-	t.Fatal("Queue Pop should panic when empty")
+	x.Expect(q.Len()).ToBe(3)
+	x.ExpectOk(q.Pop()).ToBe(9)
+	x.ExpectOk(q.Pop()).ToBe(8)
+	x.ExpectOk(q.Pop()).ToBe(7)
+	x.Expect(q.Len()).ToBe(0)
+	x.ExpectNotOk(q.Pop())
 }
 
 func TestQueueAt(t *testing.T) {
+	x := expected.New(t)
 	q := NewQueue[int](5)
 	q.Push(9)
 	q.Push(8)
 	q.Push(7)
 	q.Push(6)
-	expect(t, q.At(0), 9)
-	expect(t, q.Pop(), 9)
-	expect(t, q.At(0), 8)
-	expect(t, q.At(1), 7)
-	expect(t, q.At(2), 6)
-
-	defer func() { _ = recover() }()
-	q.At(3)
-	t.Fatal("Queue At() with an invalid index should have panicked")
+	x.ExpectOk(q.At(0)).ToBe(9)
+	x.ExpectOk(q.Pop()).ToBe(9)
+	x.ExpectOk(q.At(0)).ToBe(8)
+	x.ExpectOk(q.At(1)).ToBe(7)
+	x.ExpectOk(q.At(2)).ToBe(6)
+	x.ExpectNotOk(q.At(3))
 }
 
 func TestQueueClear(t *testing.T) {
@@ -77,16 +74,17 @@ func TestQueueClear(t *testing.T) {
 }
 
 func TestQueueClone(t *testing.T) {
+	x := expected.New(t)
 	d := NewQueue[int](4)
 	d.Push(9)
 	d.Push(8)
 	d.Push(7)
 	expect(t, d.Len(), 3)
 	c := d.Clone()
-	expect(t, c.Len(), 3)
-	expect(t, c.Pop(), 9)
-	expect(t, c.Pop(), 8)
-	expect(t, c.Pop(), 7)
-	expect(t, c.Len(), 0)
-	expect(t, d.Len(), 3)
+	x.Expect(c.Len()).ToBe(3)
+	x.ExpectOk(c.Pop()).ToBe(9)
+	x.ExpectOk(c.Pop()).ToBe(8)
+	x.ExpectOk(c.Pop()).ToBe(7)
+	x.Expect(c.Len()).ToBe(0)
+	x.Expect(d.Len()).ToBe(3)
 }

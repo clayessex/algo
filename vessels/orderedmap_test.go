@@ -24,12 +24,12 @@ func TestInsert(t *testing.T) {
 
 	x := expected.New(t)
 	x.Expect(m.Len()).ToBe(3)
-	x.Expect(m.First()).ToBe("c")
-	x.Expect(m.Last()).ToBe("a")
+	x.ExpectOk(m.First()).ToBe("c")
+	x.ExpectOk(m.Last()).ToBe("a")
 
 	x.ExpectOk(m.Value("a")).ToBe(9)
 	m.Insert("a", 3)
-	x.Expect(m.Last()).ToBe("a")
+	x.ExpectOk(m.Last()).ToBe("a")
 	x.ExpectOk(m.Value("a")).ToBe(3)
 }
 

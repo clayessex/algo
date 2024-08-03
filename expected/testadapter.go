@@ -5,56 +5,56 @@ import (
 	"testing"
 )
 
-type TestAdapter struct {
-	t     *testing.T
+type TestAdapter testing.T
+
+type TestAdapterValue struct {
+	t     *TestAdapter
 	value interface{}
 }
 
 func New(t *testing.T) *TestAdapter {
-	adapt := new(TestAdapter)
-	adapt.t = t
-	return adapt
+	return (*TestAdapter)(t)
 }
 
-func (adapt *TestAdapter) Expect(value interface{}) *TestAdapter {
-	adapt.t.Helper()
-	adapt.value = value
-	return adapt
+func (adapt *TestAdapter) Expect(value interface{}) *TestAdapterValue {
+	adapt.Helper()
+	t := &TestAdapterValue{adapt, value}
+	return t
 }
 
-func (adapt *TestAdapter) ExpectOk(value interface{}, ok bool) *TestAdapter {
-	adapt.t.Helper()
+func (adapt *TestAdapter) ExpectOk(value interface{}, ok bool) *TestAdapterValue {
+	adapt.Helper()
 	if !ok {
-		adapt.t.Fatalf("%s failed: expected ok", adapt.t.Name())
+		adapt.Fatalf("%s failed: expected ok", adapt.Name())
 	}
-	adapt.value = value
-	return adapt
+	t := &TestAdapterValue{adapt, value}
+	return t
 }
 
 func (adapt *TestAdapter) ExpectNotOk(_ interface{}, ok bool) {
-	adapt.t.Helper()
+	adapt.Helper()
 	if ok {
-		adapt.t.Fatalf("%s failed: expected not ok", adapt.t.Name())
+		adapt.Fatalf("%s failed: expected not ok", adapt.Name())
 	}
 }
 
-func (adapt *TestAdapter) ToBe(want interface{}) {
-	adapt.t.Helper()
-	if !reflect.DeepEqual(want, adapt.value) {
-		adapt.t.Fatalf("%s failed:\n    expected: >%v<\n      actual: >%v<\n", adapt.t.Name(), want, adapt.value)
+func (v *TestAdapterValue) ToBe(want interface{}) {
+	v.t.Helper()
+	if !reflect.DeepEqual(want, v.value) {
+		v.t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", v.t.Name(), want, v.value)
 	}
 }
 
-func (adapt *TestAdapter) ToNotBe(want interface{}) {
-	adapt.t.Helper()
-	if reflect.DeepEqual(want, adapt.value) {
-		adapt.t.Fatalf("%s failed:\n  not expected: %v\n        actual: %v\n", adapt.t.Name(), want, adapt.value)
+func (v *TestAdapterValue) ToNotBe(want interface{}) {
+	v.t.Helper()
+	if reflect.DeepEqual(want, v.value) {
+		v.t.Fatalf("%s failed:\n  not expected: %v\n        actual: %v\n", v.t.Name(), want, v.value)
 	}
 }
 
 func (adapt *TestAdapter) Assert(actual interface{}, want interface{}) {
-	adapt.t.Helper()
+	adapt.Helper()
 	if !reflect.DeepEqual(want, actual) {
-		adapt.t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", adapt.t.Name(), want, actual)
+		adapt.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", adapt.Name(), want, actual)
 	}
 }

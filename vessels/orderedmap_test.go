@@ -1,6 +1,10 @@
 package vessels
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/clayessex/algo/expected"
+)
 
 func TestNewOrderedMap(t *testing.T) {
 	om := NewOrderedMap[int, int]()
@@ -20,4 +24,22 @@ func TestInsert(t *testing.T) {
 	expect(t, m.Len(), 3)
 	expect(t, m.First(), "c") // fifo
 	expect(t, m.Last(), "a")
+}
+
+func TestContains(t *testing.T) {
+	m := NewOrderedMap[int, int]()
+	m.Insert(1, 9)
+	m.Insert(2, 8)
+	expect(t, m.Contains(3), false)
+	expect(t, m.Contains(1), true)
+	expect(t, m.Contains(2), true)
+}
+
+func TestValue(tt *testing.T) {
+	m := NewOrderedMap[int, int]()
+	m.Insert(1, 9)
+	m.Insert(2, 8)
+
+	t := expected.New(tt)
+	t.ExpectOk(m.Value(2)).ToBe(8)
 }

@@ -31,10 +31,17 @@ func (adapt *TestAdapter) ExpectOk(value interface{}, ok bool) *TestAdapter {
 	return adapt
 }
 
+func (adapt *TestAdapter) ExpectNotOk(_ interface{}, ok bool) {
+	adapt.t.Helper()
+	if ok {
+		adapt.t.Fatalf("%s failed: expected not ok", adapt.t.Name())
+	}
+}
+
 func (adapt *TestAdapter) ToBe(want interface{}) {
 	adapt.t.Helper()
 	if !reflect.DeepEqual(want, adapt.value) {
-		adapt.t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", adapt.t.Name(), want, adapt.value)
+		adapt.t.Fatalf("%s failed:\n    expected: >%v<\n      actual: >%v<\n", adapt.t.Name(), want, adapt.value)
 	}
 }
 

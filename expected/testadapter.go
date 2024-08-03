@@ -52,6 +52,10 @@ func (v *TestAdapterValue) ToNotBe(want interface{}) {
 	}
 }
 
+func (v *TestAdapterValue) Value() interface{} {
+	return v.value
+}
+
 func (adapt *TestAdapter) Assert(actual interface{}, want interface{}) {
 	adapt.Helper()
 	if !reflect.DeepEqual(want, actual) {

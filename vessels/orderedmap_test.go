@@ -149,6 +149,18 @@ func TestOMValues(t *testing.T) {
 	x.Expect(m.Values()).ToBe([]int{9, 8, 7})
 }
 
+func TestOMAt(t *testing.T) {
+	x := expected.New(t)
+	m := NewOrderedMap[int, int]()
+	m.Push(1, 9)
+	m.Push(2, 8)
+	m.Push(3, 7)
+	m.Push(4, 6)
+	x.ExpectNotOk(m.At(4))
+	x.ExpectOk(m.At(2)).ToBe(7)
+	x.ExpectOk(m.At(3)).ToBe(6)
+}
+
 func TestOMRange(t *testing.T) {
 	x := expected.New(t)
 	m := NewOrderedMap[int, int]()

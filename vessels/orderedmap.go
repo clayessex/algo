@@ -124,6 +124,15 @@ func (m *OrderedMap[K, V]) Values() []V {
 	return r
 }
 
+func (m *OrderedMap[K, V]) At(index int) (V, bool) {
+	key, ok := m.ord.At(index)
+	if !ok {
+		return *new(V), false
+	}
+	value, ok := m.data[key]
+	return value, ok
+}
+
 func (m *OrderedMap[K, V]) Range(f func(K, V)) {
 	m.ord.Range(func(key K) {
 		value := m.data[key]

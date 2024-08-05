@@ -45,22 +45,55 @@ func Test_internal_DequeSize(t *testing.T) {
 }
 
 func Test_internal_copy(t *testing.T) {
+	// 3 Code Paths
+	//  1. buffer does not wrap
+	//  2. buffer wraps with size limiting at top
+	//  3. buffer wraps with size limiting at bottom
+
 	x := expected.New(t)
-	d := NewDeque[int](10)
+	d := NewDeque[int](8)
 	d.PushBack(9)
 	d.PushBack(8)
 	d.PushBack(7)
 	d.PushBack(6)
-	x.Expect(d.Len()).ToBe(4)
+	d.PushBack(5)
+	d.PushBack(4)
 
-	b := make([]int, 4)
+	// copy all elements (path 1)
+	b := make([]int, 6)
 	d.copy(b)
-	x.Expect(b).ToBe([]int{9, 8, 7, 6})
+	x.Expect(b).ToBe([]int{9, 8, 7, 6, 5, 4})
 
-	// Copy to an undersized buffer
+	// copy partial (path 1)
+	b = make([]int, 3)
+	d.copy(b)
+	x.Expect(b).ToBe([]int{9, 8, 7})
+
+	// wrap buffer
+	d.PopFront()
+	d.PopFront()
+	d.PopFront()
+	d.PopFront()
+	d.PopFront()
+	d.PopFront()
+	d.PushBack(4)
+	d.PushBack(5)
+	d.PushBack(6)
+	d.PushBack(7)
+	d.PushBack(8)
+	d.PushBack(9)
+	// { 7, 8, 9, X, x, x, 4, 5, 6} // internal buf
+	x.Expect(d.buf[0:3]).ToBe([]int{7, 8, 9}) // internal
+	x.Expect(d.buf[6:9]).ToBe([]int{4, 5, 6}) // internal
+
+	// Path 2
 	b = make([]int, 2)
-	x.Expect(d.Len()).ToBe(4)
-	x.Expect(d.copy(b)).ToBe(2)
+	d.copy(b)
+	x.Expect(b).ToBe([]int{4, 5})
+	// Path 3
+	b = make([]int, 5)
+	d.copy(b)
+	x.Expect(b).ToBe([]int{4, 5, 6, 7, 8})
 }
 
 func Test_internal_PushBack(t *testing.T) {

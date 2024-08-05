@@ -50,3 +50,38 @@ func TestValue(t *testing.T) {
 	x.ExpectOk(m.Value(2)).ToBe(8)
 	x.ExpectNotOk(m.Value(5))
 }
+
+func TestDelete(t *testing.T) {
+	x := expected.New(t)
+	m := NewOrderedMap[int, int]()
+	m.Insert(1, 9)
+	m.Insert(2, 8)
+	x.Expect(m.Delete(2)).ToBe(true)
+	x.Expect(m.Len()).ToBe(1)
+	x.Expect(m.Delete(42)).ToBe(false)
+}
+
+func TestPush(t *testing.T) {
+	m := NewOrderedMap[int, int]()
+	m.Push(1, 9)
+	expected.Expect(t, m.Len(), 1)
+}
+
+func TestPop(t *testing.T) {
+	x := expected.New(t)
+	m := NewOrderedMap[int, int]()
+	m.Push(1, 9)
+	x.ExpectOk(m.Pop()).ToBe(1)
+	x.ExpectNotOk(m.Pop())
+}
+
+func TestOMNext(t *testing.T) {
+	x := expected.New(t)
+	m := NewOrderedMap[int, int]()
+	x.ExpectNotOk(m.Next(42))
+
+	m.Push(1, 9)
+	x.ExpectNotOk(m.Next(1))
+	m.Push(2, 9)
+	x.ExpectOk(m.Next(1)).ToBe(2)
+}

@@ -2,7 +2,7 @@ package vessels
 
 type OrderedMap[K comparable, V any] struct {
 	data map[K]V
-	del  map[K]*ListNode[K]
+	del  map[K]*ListNode[K] // TODO: rename 'nodes'
 	ord  List[K]
 }
 
@@ -36,7 +36,7 @@ func (m *OrderedMap[K, V]) Value(key K) (V, bool) {
 func (m *OrderedMap[K, V]) Insert(key K, value V) {
 	if !m.Contains(key) { // if exists, overwrite in place
 		m.ord.PushBack(key)
-		m.del[key] = m.ord.End()
+		m.del[key] = m.ord.End().Prev()
 	}
 	m.data[key] = value
 }
@@ -57,14 +57,9 @@ func (m *OrderedMap[K, V]) Push(key K, value V) {
 }
 
 func (m *OrderedMap[K, V]) Pop() (K, bool) {
-	if m.ord.Len() == 0 {
-		var zero K
-		return zero, false
-	}
 	key, ok := m.ord.PopBack()
-	if !ok {
-		var zero K
-		return zero, false
+	if !ok { // only happens when list is empty
+		return *new(K), false
 	}
 	delete(m.del, key)
 	delete(m.data, key)
@@ -74,13 +69,11 @@ func (m *OrderedMap[K, V]) Pop() (K, bool) {
 func (m *OrderedMap[K, V]) Next(key K) (K, bool) {
 	n, ok := m.del[key]
 	if !ok {
-		var zero K
-		return zero, false
+		return *new(K), false
 	}
 	nextNode := n.Next()
 	if nextNode == m.ord.End() {
-		var zero K
-		return zero, false
+		return *new(K), false
 	}
 
 	return nextNode.value, true

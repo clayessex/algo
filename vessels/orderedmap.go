@@ -1,9 +1,9 @@
 package vessels
 
 type OrderedMap[K comparable, V any] struct {
-	data  map[K]V
-	nodes map[K]*ListNode[K]
-	ord   List[K]
+	data  map[K]V            // map keys to values
+	nodes map[K]*ListNode[K] // map keys to ListNodes
+	ord   List[K]            // list order of keys
 }
 
 func NewOrderedMap[K comparable, V any](size ...int) *OrderedMap[K, V] {
@@ -94,18 +94,16 @@ func (m *OrderedMap[K, V]) Prev(key K) (K, bool) {
 
 func (m *OrderedMap[K, V]) First() (K, bool) {
 	if m.ord.Len() == 0 {
-		var zero K
-		return zero, false
+		return *new(K), false
 	}
-	return m.ord.Back()
+	return m.ord.Front()
 }
 
 func (m *OrderedMap[K, V]) Last() (K, bool) {
 	if m.ord.Len() == 0 {
-		var zero K
-		return zero, false
+		return *new(K), false
 	}
-	return m.ord.Front()
+	return m.ord.Back()
 }
 
 func (m *OrderedMap[K, V]) Clear() {

@@ -5,60 +5,78 @@ import (
 	"testing"
 )
 
-type TestAdapter testing.T
+type Expected testing.T
 
-type TestAdapterValue struct {
-	t     *TestAdapter
+type ExpectedValue struct {
+	t     *Expected
 	value interface{}
 }
 
-func New(t *testing.T) *TestAdapter {
-	return (*TestAdapter)(t)
+func New(t *testing.T) *Expected {
+	return (*Expected)(t)
 }
 
-func (adapt *TestAdapter) Expect(value interface{}) *TestAdapterValue {
-	adapt.Helper()
-	t := &TestAdapterValue{adapt, value}
+func (x *Expected) Expect(value interface{}) *ExpectedValue {
+	x.Helper()
+	t := &ExpectedValue{x, value}
 	return t
 }
 
-func (adapt *TestAdapter) ExpectOk(value interface{}, ok bool) *TestAdapterValue {
-	adapt.Helper()
+func (x *Expected) ExpectOk(value interface{}, ok bool) *ExpectedValue {
+	x.Helper()
 	if !ok {
-		adapt.Fatalf("%s failed: expected ok", adapt.Name())
+		x.Fatalf("%s failed: expected ok", x.Name())
 	}
-	t := &TestAdapterValue{adapt, value}
+	t := &ExpectedValue{x, value}
 	return t
 }
 
-func (adapt *TestAdapter) ExpectNotOk(_ interface{}, ok bool) {
-	adapt.Helper()
+func (x *Expected) ExpectNotOk(_ interface{}, ok bool) {
+	x.Helper()
 	if ok {
-		adapt.Fatalf("%s failed: expected not ok", adapt.Name())
+		x.Fatalf("%s failed: expected not ok", x.Name())
 	}
 }
 
-func (v *TestAdapterValue) ToBe(want interface{}) {
+func (x *Expected) ExpectErr(_ interface{}, err error) *ExpectedValue {
+	x.Helper()
+	if err == nil {
+		x.Fatalf("%s failed: expected error got nil", x.Name())
+	}
+	t := &ExpectedValue{x, err}
+	return t
+}
+
+func (x *Expected) ExpectErrNil(value interface{}, err error) *ExpectedValue {
+	x.Helper()
+	if err != nil {
+		x.Fatalf("%s failed: expected nil error got: %v", x.Name(), err)
+	}
+	t := &ExpectedValue{x, value}
+	return t
+}
+
+func (v *ExpectedValue) ToBe(want interface{}) {
 	v.t.Helper()
 	if !reflect.DeepEqual(want, v.value) {
 		v.t.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", v.t.Name(), want, v.value)
 	}
 }
 
-func (v *TestAdapterValue) ToNotBe(want interface{}) {
+func (v *ExpectedValue) ToNotBe(want interface{}) {
 	v.t.Helper()
 	if reflect.DeepEqual(want, v.value) {
 		v.t.Fatalf("%s failed:\n  not expected: %v\n        actual: %v\n", v.t.Name(), want, v.value)
 	}
 }
 
-func (v *TestAdapterValue) Value() interface{} {
+func (v *ExpectedValue) Value() interface{} {
 	return v.value
 }
 
-func (adapt *TestAdapter) Assert(actual interface{}, want interface{}) {
-	adapt.Helper()
+func (x *Expected) Assert(actual interface{}, want interface{}) {
+	x.Helper()
 	if !reflect.DeepEqual(want, actual) {
-		adapt.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", adapt.Name(), want, actual)
+		x.Fatalf("%s failed:\n    expected: %v\n      actual: %v\n", x.Name(), want, actual)
 	}
 }

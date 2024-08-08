@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/clayessex/godev/expected"
+	"github.com/clayessex/algo/expected"
 )
 
 func expect[T any](t *testing.T, actual T, want T) {
